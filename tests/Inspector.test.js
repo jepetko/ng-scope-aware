@@ -84,6 +84,16 @@ describe('Inspector', function() {
 	}));
 	
 	describe('scopeEmulations', function() {
+
+        var expectedScopeHierarchy = {};
+        beforeEach(function() {
+            expectedScopeHierarchy.directiveSharedScope = ['alienToken', 'alienTokenObj', 'alienFun'];
+            expectedScopeHierarchy.directiveSharedScopeExpl = ['alienToken', 'alienTokenObj', 'alienFun'];
+            expectedScopeHierarchy.directiveIsolatedScope = [];
+            expectedScopeHierarchy.directiveIsolatedScopeWithString = ['token'];
+            expectedScopeHierarchy.directiveIsolatedScopeWithObject = ['tokenobj'];
+            expectedScopeHierarchy.directiveIsolatedScopeWithFunction = ['fun'];
+        });
 		
 		angular.forEach(['directiveSharedScope','directiveSharedScopeExpl','directiveIsolatedScope',
                         'directiveIsolatedScopeWithString', 'directiveIsolatedScopeWithObject',
@@ -93,15 +103,19 @@ describe('Inspector', function() {
 				return function() {
                     var element = scopeEmulations.directive(value, $scope);
                     expect(element).toBeDefined();
-                    expect(element.scope()).toBeDefined();
+
+                    var keys = Object.keys(element.isolateScope() || element.scope());
+                    expectedScopeHierarchy[val].forEach(function(element) {
+                        expect(keys).toContain(element);
+                    });
                 };
 			})(value));
 		});		
 	});
-	
-	describe('features', function() {
 
-		it('should print scope hierarchy', function() {
+	describe('directives', function() {
+
+		it('should create a scope hierarchy', function() {
 						
 			scopeEmulations.directive('directiveSharedScope', $scope);	
 			scopeEmulations.directive('directiveSharedScopeExpl', $scope);

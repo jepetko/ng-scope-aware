@@ -4,9 +4,15 @@
 	var defaultDirectiveReturnValue = {
 			'restrict' : 'AE',
 			'replace': true,
-			'transclude': true,
-			'template' : '<div>{{token}}<p ng-transclude></p></div>'
+			'template' : '<div>{{token}}</div>'
 	};
+
+    var defaultDirectiveTranscludeReturnValue = {
+        'restrict' : 'AE',
+        'replace': true,
+        'transclude': true,
+        'template' : '<div>{{token}}<p ng-transclude></p></div>'
+    };
 	
 	angular.module('scope-utils-mocks', [])
 	.directive('directiveSharedScope', function() {
