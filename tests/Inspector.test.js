@@ -45,23 +45,20 @@ describe('Inspector', function() {
 			},
 			'directiveIsolatedScopeWithObject' : function() {
 				var node = toDashed('directiveIsolatedScopeWithObject');
-				return '<' + node + ' tokenobj="alienTokenObj"/>'; 			
+				return '<' + node + ' tokenobj="alienTokenObj"/>';
 			},
 			'directiveIsolatedScopeWithFunction' : function() {
 				var node = toDashed('directiveIsolatedScopeWithFunction');
-				return '<' + node + ' fun="alienFun()"/>';				
+                return '<' + node + ' fun="alienFun()"/>';
 			}
 		};
 		
 		return {
 			directive : function(type, scope) {
 				var tpl = htmlTemplates[type] ? htmlTemplates[type]() : '<' + toDashed(type) + '/>';
-				console.log(tpl);
 				var element = $compile(tpl)(scope);
 				scope.$digest();
-				
-				console.log(element);
-				
+
 				return element;
 			}
 		};
@@ -89,16 +86,15 @@ describe('Inspector', function() {
 	describe('scopeEmulations', function() {
 		
 		angular.forEach(['directiveSharedScope','directiveSharedScopeExpl','directiveIsolatedScope',
-		                 'directiveIsolatedScopeWithString', 'directiveIsolatedScopeWithObject',
-		                 'directiveIsolatedScopeWithFunction'], function(value) {
+                        'directiveIsolatedScopeWithString', 'directiveIsolatedScopeWithObject',
+                        'directiveIsolatedScopeWithFunction'], function(value) {
 			it('should create a directive ' + value, (function(val) {
 			
 				return function() {
-					var element = scopeEmulations.directive(value, $scope);				
-					expect(element).toBeDefined();
-					expect(element.scope()).toBeDefined();
-				}
-
+                    var element = scopeEmulations.directive(value, $scope);
+                    expect(element).toBeDefined();
+                    expect(element.scope()).toBeDefined();
+                };
 			})(value));
 		});		
 	});
@@ -114,11 +110,11 @@ describe('Inspector', function() {
 			scopeEmulations.directive('directiveIsolatedScopeWithString', $scope);
 			scopeEmulations.directive('directiveIsolatedScopeWithFunction', $scope);
 			
-			var nestedDirectives = '<directive-isolated-scope-with-string token="{{alienToken}}">'
-									+ '<directive-isolated-scope-with-object tokenobj="alienTokenObj">'
-										+ '<directive-isolated-scope-with-function fun="alienFun()">hello</directive-isolated-scope-with-function>'
-									+ '</directive-isolated-scope-with-object>'
-								+ '</directive-isolated-scope-with-string>';
+			var nestedDirectives = '<directive-isolated-scope-with-string token="{{alienToken}}">' +
+                                    '<directive-isolated-scope-with-object tokenobj="alienTokenObj">' +
+                                        '<directive-isolated-scope-with-function fun="alienFun()">hello</directive-isolated-scope-with-function>' +
+                                    '</directive-isolated-scope-with-object>' +
+                                   '</directive-isolated-scope-with-string>';
 						
 			var element = $compile(nestedDirectives)($scope);
 			$scope.$digest();
