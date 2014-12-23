@@ -119,7 +119,8 @@ describe('Inspector', function() {
 			var element = $compile(nestedDirectives)($scope);
 			$scope.$digest();
 			
-			Inspector.inspect();
+			var result = Inspector.inspect();
+            console.log(result);
 		});
 	});
 });
