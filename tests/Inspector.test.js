@@ -127,7 +127,7 @@ describe('Inspector', function() {
 			var a = scopeEmulations.directive('directiveSharedScope', $scope),
                 b = scopeEmulations.directive('directiveSharedScopeExpl', $scope),
                 c = scopeEmulations.directive('directiveIsolatedScope', $scope),
-			    d = scopeEmulations.directive('directiveIsolatedScopeWithString', $scope),
+                d = scopeEmulations.directive('directiveIsolatedScopeWithString', $scope),
                 e = scopeEmulations.directive('directiveIsolatedScopeWithObject', $scope),
                 f = scopeEmulations.directive('directiveIsolatedScopeWithFunction', $scope);
 
