@@ -3,6 +3,13 @@ describe('Inspector', function() {
 	"use strict";
 	
 	var $rootScope, $scope, $compile, Inspector;
+
+    var getScope = function(element) {
+        return element.isolateScope() || element.scope();
+    };
+    var getScopeId = function(element) {
+        return getScope(element).$id;
+    };
 	
 	var scopeEmulations = (function() {
 		
@@ -115,26 +122,51 @@ describe('Inspector', function() {
 
 	describe('directives', function() {
 
-		it('should create a scope hierarchy', function() {
+		it('should create proper scopes', function() {
 						
-			scopeEmulations.directive('directiveSharedScope', $scope);	
-			scopeEmulations.directive('directiveSharedScopeExpl', $scope);
-			
-			scopeEmulations.directive('directiveIsolatedScope', $scope);
-			scopeEmulations.directive('directiveIsolatedScopeWithString', $scope);
-			scopeEmulations.directive('directiveIsolatedScopeWithFunction', $scope);
-			
-			var nestedDirectives = '<directive-isolated-scope-with-string token="{{alienToken}}">' +
-                                    '<directive-isolated-scope-with-object tokenobj="alienTokenObj">' +
-                                        '<directive-isolated-scope-with-function fun="alienFun()">hello</directive-isolated-scope-with-function>' +
-                                    '</directive-isolated-scope-with-object>' +
-                                   '</directive-isolated-scope-with-string>';
-						
-			var element = $compile(nestedDirectives)($scope);
-			$scope.$digest();
-			
-			var result = Inspector.inspect();
-            console.log(result);
+			var a = scopeEmulations.directive('directiveSharedScope', $scope),
+                b = scopeEmulations.directive('directiveSharedScopeExpl', $scope),
+                c = scopeEmulations.directive('directiveIsolatedScope', $scope),
+			    d = scopeEmulations.directive('directiveIsolatedScopeWithString', $scope),
+                e = scopeEmulations.directive('directiveIsolatedScopeWithObject', $scope),
+                f = scopeEmulations.directive('directiveIsolatedScopeWithFunction', $scope);
+
+            var expectedScopeHierarchy = {};
+            expectedScopeHierarchy[getScopeId(a)] = ['alienToken', 'alienTokenObj', 'alienFun'];
+            expectedScopeHierarchy[getScopeId(b)] = ['alienToken', 'alienTokenObj', 'alienFun'];
+            expectedScopeHierarchy[getScopeId(c)] = [];
+            expectedScopeHierarchy[getScopeId(d)] = ['token'];
+            expectedScopeHierarchy[getScopeId(e)] = ['tokenobj'];
+            expectedScopeHierarchy[getScopeId(f)] = ['fun'];
+
+            Inspector.inspect(function(id,data) {
+                if(!expectedScopeHierarchy[id]) {
+                    return;
+                }
+                var keys = Object.keys(data);
+                expectedScopeHierarchy[id].forEach(function(element) {
+                    expect(keys).toContain(element);
+                });
+            });
 		});
+
+        //TODO: add test for ng-transclude and ng-include
+        it('should create proper scopes with transcludes', function() {
+            /*
+            var nestedDirectives = '<directive-isolated-scope-with-string token="{{alienToken}}">' +
+                //Note: nested directives are thrown away because of the missing ng-transclude
+                '<directive-isolated-scope-with-object tokenobj="alienTokenObj">' +
+                '<directive-isolated-scope-with-function fun="alienFun()">hello</directive-isolated-scope-with-function>' +
+                '</directive-isolated-scope-with-object>' +
+                '</directive-isolated-scope-with-string>';
+
+            var element = $compile(nestedDirectives)($scope);
+            $scope.$digest();
+
+            var result = Inspector.inspect();
+            //console.log(result);
+            */
+        });
 	});
+
 });
