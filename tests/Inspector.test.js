@@ -2,81 +2,15 @@ describe('Inspector', function () {
 
     "use strict";
 
-    var $rootScope, $scope, $compile, Inspector;
-
-    var getScope = function (element) {
-        return element.isolateScope() || element.scope();
-    };
-    var getScopeId = function (element) {
-        return getScope(element).$id;
-    };
-
-    var scopeEmulations = (function () {
-
-        var toCamelCase = function (str) {
-            if (typeof str === 'undefined') {
-                return str;
-            }
-            var pieces = str.split(/\-/g);
-            var result;
-            angular.forEach(pieces, function (val) {
-                if (typeof result === 'undefined') {
-                    result = val.toLowerCase();
-                } else {
-                    result += val.charAt(0).toUpperCase() + val.slice(1);
-                }
-            });
-            return result;
-        };
-
-        var toDashed = function (str) {
-            if (typeof str === 'undefined') {
-                return str;
-            }
-            var result = '';
-            for (var i = 0; i < str.length; i++) {
-                var ch = str.charCodeAt(i);
-                if (ch >= 65 && ch <= 90) {
-                    result += '-' + str.charAt(i).toLowerCase();
-                } else {
-                    result += str.charAt(i);
-                }
-            }
-            return result;
-        };
-
-        var htmlTemplates = {
-            'directiveIsolatedScopeWithString': function () {
-                var node = toDashed('directiveIsolatedScopeWithString');
-                return '<' + node + ' token="{{alienToken}}"/>';
-            },
-            'directiveIsolatedScopeWithObject': function () {
-                var node = toDashed('directiveIsolatedScopeWithObject');
-                return '<' + node + ' tokenobj="alienTokenObj"/>';
-            },
-            'directiveIsolatedScopeWithFunction': function () {
-                var node = toDashed('directiveIsolatedScopeWithFunction');
-                return '<' + node + ' fun="alienFun()"/>';
-            }
-        };
-
-        return {
-            directive: function (type, scope) {
-                var tpl = htmlTemplates[type] ? htmlTemplates[type]() : '<' + toDashed(type) + '/>';
-                var element = $compile(tpl)(scope);
-                scope.$digest();
-
-                return element;
-            }
-        };
-    })();
+    var $rootScope, $scope, $compile, Inspector, InspectorHelpers;
 
     beforeEach(function () {
-        module('scope-mocks');
-        module('scope-utils');
+        module('inspector-test-mocks');
+        module('inspector-test-helpers');
+        module('scope-aware');
     });
 
-    beforeEach(inject(function (_$rootScope_, _$compile_, _Inspector_) {
+    beforeEach(inject(function (_$rootScope_, _$compile_, _Inspector_, _InspectorHelpers_) {
         $rootScope = _$rootScope_;
         $scope = $rootScope.$new();
 
@@ -88,6 +22,7 @@ describe('Inspector', function () {
 
         $compile = _$compile_;
         Inspector = _Inspector_;
+        InspectorHelpers = _InspectorHelpers_;
     }));
 
     describe('scopeEmulations', function () {
@@ -108,7 +43,7 @@ describe('Inspector', function () {
             it('should create a directive ' + value, (function (val) {
 
                 return function () {
-                    var element = scopeEmulations.directive(value, $scope);
+                    var element = InspectorHelpers.createDirective(value, $scope);
                     expect(element).toBeDefined();
 
                     var keys = Object.keys(element.isolateScope() || element.scope());
@@ -124,20 +59,20 @@ describe('Inspector', function () {
 
         it('should create proper scopes', function () {
 
-            var a = scopeEmulations.directive('directiveSharedScope', $scope),
-                b = scopeEmulations.directive('directiveSharedScopeExplicit', $scope),
-                c = scopeEmulations.directive('directiveIsolatedScope', $scope),
-                d = scopeEmulations.directive('directiveIsolatedScopeWithString', $scope),
-                e = scopeEmulations.directive('directiveIsolatedScopeWithObject', $scope),
-                f = scopeEmulations.directive('directiveIsolatedScopeWithFunction', $scope);
+            var a = InspectorHelpers.createDirective('directiveSharedScope', $scope),
+                b = InspectorHelpers.createDirective('directiveSharedScopeExplicit', $scope),
+                c = InspectorHelpers.createDirective('directiveIsolatedScope', $scope),
+                d = InspectorHelpers.createDirective('directiveIsolatedScopeWithString', $scope),
+                e = InspectorHelpers.createDirective('directiveIsolatedScopeWithObject', $scope),
+                f = InspectorHelpers.createDirective('directiveIsolatedScopeWithFunction', $scope);
 
             var expectedScopeHierarchy = {};
-            expectedScopeHierarchy[getScopeId(a)] = ['alienToken', 'alienTokenObj', 'alienFun'];
-            expectedScopeHierarchy[getScopeId(b)] = ['alienToken', 'alienTokenObj', 'alienFun'];
-            expectedScopeHierarchy[getScopeId(c)] = [];
-            expectedScopeHierarchy[getScopeId(d)] = ['token'];
-            expectedScopeHierarchy[getScopeId(e)] = ['tokenobj'];
-            expectedScopeHierarchy[getScopeId(f)] = ['fun'];
+            expectedScopeHierarchy[InspectorHelpers.getScopeId(a)] = ['alienToken', 'alienTokenObj', 'alienFun'];
+            expectedScopeHierarchy[InspectorHelpers.getScopeId(b)] = ['alienToken', 'alienTokenObj', 'alienFun'];
+            expectedScopeHierarchy[InspectorHelpers.getScopeId(c)] = [];
+            expectedScopeHierarchy[InspectorHelpers.getScopeId(d)] = ['token'];
+            expectedScopeHierarchy[InspectorHelpers.getScopeId(e)] = ['tokenobj'];
+            expectedScopeHierarchy[InspectorHelpers.getScopeId(f)] = ['fun'];
 
             var result = Inspector.inspect(function (id, data) {
                 if (!expectedScopeHierarchy[id]) {

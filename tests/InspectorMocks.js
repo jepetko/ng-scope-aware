@@ -14,7 +14,7 @@
         'template' : '<div>{{token}}<p ng-transclude></p></div>'
     };
 	
-	angular.module('scope-mocks', [])
+	angular.module('inspector-test-mocks', [])
 	.directive('directiveSharedScope', function() {
 		return angular.extend({}, defaultDirectiveReturnValue);
 	})
