@@ -95,14 +95,14 @@ describe('Inspector', function () {
         var expectedScopeHierarchy = {};
         beforeEach(function () {
             expectedScopeHierarchy.directiveSharedScope = ['alienToken', 'alienTokenObj', 'alienFun'];
-            expectedScopeHierarchy.directiveSharedScopeExpl = ['alienToken', 'alienTokenObj', 'alienFun'];
+            expectedScopeHierarchy.directiveSharedScopeExplicit = ['alienToken', 'alienTokenObj', 'alienFun'];
             expectedScopeHierarchy.directiveIsolatedScope = [];
             expectedScopeHierarchy.directiveIsolatedScopeWithString = ['token'];
             expectedScopeHierarchy.directiveIsolatedScopeWithObject = ['tokenobj'];
             expectedScopeHierarchy.directiveIsolatedScopeWithFunction = ['fun'];
         });
 
-        angular.forEach(['directiveSharedScope', 'directiveSharedScopeExpl', 'directiveIsolatedScope',
+        angular.forEach(['directiveSharedScope', 'directiveSharedScopeExplicit', 'directiveIsolatedScope',
             'directiveIsolatedScopeWithString', 'directiveIsolatedScopeWithObject',
             'directiveIsolatedScopeWithFunction'], function (value) {
             it('should create a directive ' + value, (function (val) {
@@ -125,7 +125,7 @@ describe('Inspector', function () {
         it('should create proper scopes', function () {
 
             var a = scopeEmulations.directive('directiveSharedScope', $scope),
-                b = scopeEmulations.directive('directiveSharedScopeExpl', $scope),
+                b = scopeEmulations.directive('directiveSharedScopeExplicit', $scope),
                 c = scopeEmulations.directive('directiveIsolatedScope', $scope),
                 d = scopeEmulations.directive('directiveIsolatedScopeWithString', $scope),
                 e = scopeEmulations.directive('directiveIsolatedScopeWithObject', $scope),
@@ -139,7 +139,7 @@ describe('Inspector', function () {
             expectedScopeHierarchy[getScopeId(e)] = ['tokenobj'];
             expectedScopeHierarchy[getScopeId(f)] = ['fun'];
 
-            Inspector.inspect(function (id, data) {
+            var result = Inspector.inspect(function (id, data) {
                 if (!expectedScopeHierarchy[id]) {
                     return;
                 }
@@ -148,6 +148,8 @@ describe('Inspector', function () {
                     expect(keys).toContain(element);
                 });
             });
+
+            console.log(result);
         });
 
         //TODO: add test for ng-transclude and ng-include

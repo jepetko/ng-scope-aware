@@ -18,7 +18,7 @@
 	.directive('directiveSharedScope', function() {
 		return angular.extend({}, defaultDirectiveReturnValue);
 	})
-	.directive('directiveSharedScopeExpl', function() {
+	.directive('directiveSharedScopeExplicit', function() {
 		return angular.extend({'scope': false}, defaultDirectiveReturnValue);
 	})
 	.directive('directiveIsolatedScope', function() {
