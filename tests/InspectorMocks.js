@@ -22,7 +22,7 @@
 		return angular.extend({'scope': false}, defaultDirectiveReturnValue);
 	})
 	.directive('directiveIsolatedScope', function() {
-		return angular.extend({'scope': true}, defaultDirectiveReturnValue);
+		return angular.extend({'scope': {}}, defaultDirectiveReturnValue);
 	})
 	.directive('directiveIsolatedScopeWithString', function() {
 		return angular.extend({'scope' : {'token': '@'}}, defaultDirectiveReturnValue);

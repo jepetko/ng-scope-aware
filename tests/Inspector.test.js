@@ -58,7 +58,6 @@ describe('Inspector', function () {
     describe('directives', function () {
 
         it('should create proper scopes', function () {
-
             var a = InspectorHelpers.createDirective('directiveSharedScope', $scope),
                 b = InspectorHelpers.createDirective('directiveSharedScopeExplicit', $scope),
                 c = InspectorHelpers.createDirective('directiveIsolatedScope', $scope),
@@ -74,17 +73,17 @@ describe('Inspector', function () {
             expectedScopeHierarchy[InspectorHelpers.getScopeId(e)] = ['tokenobj'];
             expectedScopeHierarchy[InspectorHelpers.getScopeId(f)] = ['fun'];
 
-            var result = Inspector.inspect(function (id, data) {
-                if (!expectedScopeHierarchy[id]) {
-                    return;
-                }
-                var keys = Object.keys(data);
-                expectedScopeHierarchy[id].forEach(function (element) {
-                    expect(keys).toContain(element);
-                });
-            });
+            InspectorHelpers.testForPresentScopeMembers(expectedScopeHierarchy);
 
-            console.log(result);
+            var unexpectedScopeHierarchy = {};
+            unexpectedScopeHierarchy[InspectorHelpers.getScopeId(a)] = ['token', 'tokenobj', 'fun'];
+            unexpectedScopeHierarchy[InspectorHelpers.getScopeId(b)] = ['token', 'tokenobj', 'fun'];
+            unexpectedScopeHierarchy[InspectorHelpers.getScopeId(c)] = ['alienToken', 'alienTokenObj', 'alienFun', 'token', 'tokenobj', 'fun'];
+            unexpectedScopeHierarchy[InspectorHelpers.getScopeId(d)] = ['tokenobj'];
+            unexpectedScopeHierarchy[InspectorHelpers.getScopeId(e)] = ['token'];
+            unexpectedScopeHierarchy[InspectorHelpers.getScopeId(f)] = ['alienToken', 'alienTokenObj', 'alienFun', 'token', 'tokenobj'];
+
+            InspectorHelpers.testForAbsentScopeMembers(unexpectedScopeHierarchy);
         });
 
         //TODO: add test for ng-transclude and ng-include
