@@ -55,7 +55,7 @@
         return angular.extend({'scope': false}, defaultDirectiveTranscludeReturnValue);
     })
     .directive('directiveIsolatedScopeWithTransclude', function() {
-        return angular.extend({'scope': true}, defaultDirectiveTranscludeReturnValue);
+        return angular.extend({'scope': {}}, defaultDirectiveTranscludeReturnValue);
     })
     .directive('directiveIsolatedScopeWithStringWithTransclude', function() {
         return angular.extend({'scope' : {'token': '@'}}, defaultDirectiveTranscludeReturnValue);
