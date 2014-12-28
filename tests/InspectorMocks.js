@@ -14,7 +14,7 @@
         'template' : '<div>{{token}}<p ng-transclude></p></div>'
     };
 	
-	angular.module('scope-utils-mocks', [])
+	angular.module('scope-mocks', [])
 	.directive('directiveSharedScope', function() {
 		return angular.extend({}, defaultDirectiveReturnValue);
 	})
@@ -46,5 +46,38 @@
 		var retVal = angular.extend(dest, defaultDirectiveReturnValue);
 		retVal.template = '<div ng-click="fun()">{{token}}</div>';
 		return retVal;
-	});	
+	})
+    // with transclude
+    .directive('directiveSharedScopeWithTransclude', function() {
+        return angular.extend({}, defaultDirectiveTranscludeReturnValue);
+    })
+    .directive('directiveSharedScopeExplicitWithTransclude', function() {
+        return angular.extend({'scope': false}, defaultDirectiveTranscludeReturnValue);
+    })
+    .directive('directiveIsolatedScopeWithTransclude', function() {
+        return angular.extend({'scope': true}, defaultDirectiveTranscludeReturnValue);
+    })
+    .directive('directiveIsolatedScopeWithStringWithTransclude', function() {
+        return angular.extend({'scope' : {'token': '@'}}, defaultDirectiveTranscludeReturnValue);
+    })
+    .directive('directiveIsolatedScopeWithObjectWithTransclude', function() {
+        var dest = {
+            'scope':    {
+                'tokenobj': '='
+            }
+        };
+        var retVal = angular.extend(dest, defaultDirectiveTranscludeReturnValue);
+        retVal.template = '<div><div>{{tokenobj.token}}</div><p ng-transclude></p></div>';
+        return retVal;
+    })
+    .directive('directiveIsolatedScopeWithFunctionWithTransclude', function() {
+        var dest = {
+            'scope':    {
+                'fun': '&'
+            }
+        };
+        var retVal = angular.extend(dest, defaultDirectiveTranscludeReturnValue);
+        retVal.template = '<div><div ng-click="fun()">{{token}}</div><p ng-transclude></p></div>';
+        return retVal;
+    });
 })();

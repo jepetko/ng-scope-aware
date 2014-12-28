@@ -72,7 +72,7 @@ describe('Inspector', function () {
     })();
 
     beforeEach(function () {
-        module('scope-utils-mocks');
+        module('scope-mocks');
         module('scope-utils');
     });
 
