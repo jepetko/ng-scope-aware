@@ -3,6 +3,16 @@ describe('Inspector', function () {
     "use strict";
 
     var $rootScope, $scope, $compile, Inspector, InspectorHelpers;
+    var createCleanScope = function($rootScope) {
+        var $scope = $rootScope.$new();
+
+        $scope.alienToken = '12345';
+        $scope.alienTokenObj = { token: '6789' };
+        $scope.alienFun = function () {
+            console.log('>> alienFun');
+        };
+        return $scope;
+    };
 
     beforeEach(function () {
         module('inspector-test-mocks');
@@ -12,14 +22,6 @@ describe('Inspector', function () {
 
     beforeEach(inject(function (_$rootScope_, _$compile_, _Inspector_, _InspectorHelpers_) {
         $rootScope = _$rootScope_;
-        $scope = $rootScope.$new();
-
-        $scope.alienToken = '12345';
-        $scope.alienTokenObj = { token: '6789' };
-        $scope.alienFun = function () {
-            console.log('>> alienFun');
-        };
-
         $compile = _$compile_;
         Inspector = _Inspector_;
         InspectorHelpers = _InspectorHelpers_;
@@ -27,8 +29,9 @@ describe('Inspector', function () {
 
     describe('scopeEmulations', function () {
 
-        var expectedScopeHierarchy = {};
+        var $scope, expectedScopeHierarchy = {};
         beforeEach(function () {
+            $scope = createCleanScope($rootScope);
             expectedScopeHierarchy.directiveSharedScope = ['alienToken', 'alienTokenObj', 'alienFun'];
             expectedScopeHierarchy.directiveSharedScopeExplicit = ['alienToken', 'alienTokenObj', 'alienFun'];
             expectedScopeHierarchy.directiveIsolatedScope = [];
@@ -56,6 +59,11 @@ describe('Inspector', function () {
     });
 
     describe('directives', function () {
+
+        var $scope;
+        beforeEach(function() {
+            $scope = createCleanScope($rootScope);
+        });
 
         it('should create proper scopes', function () {
             var a = InspectorHelpers.createDirective('directiveSharedScope', $scope),
@@ -86,22 +94,24 @@ describe('Inspector', function () {
             InspectorHelpers.testForAbsentScopeMembers(unexpectedScopeHierarchy);
         });
 
-        //TODO: add test for ng-transclude and ng-include
         it('should create proper scopes with transcludes', function () {
-            /*
-             var nestedDirectives = '<directive-isolated-scope-with-string token="{{alienToken}}">' +
-             //Note: nested directives are thrown away because of the missing ng-transclude
-             '<directive-isolated-scope-with-object tokenobj="alienTokenObj">' +
-             '<directive-isolated-scope-with-function fun="alienFun()">hello</directive-isolated-scope-with-function>' +
-             '</directive-isolated-scope-with-object>' +
-             '</directive-isolated-scope-with-string>';
+            var a = InspectorHelpers.createDirective('directiveSharedScopeWithTransclude', $scope);
+                b = InspectorHelpers.createDirective('directiveSharedScopeExplicitWithTransclude', $scope),
+                c = InspectorHelpers.createDirective('directiveIsolatedScopeWithTransclude', $scope),
+                d = InspectorHelpers.createDirective('directiveIsolatedScopeWithStringWithTransclude', $scope),
+                e = InspectorHelpers.createDirective('directiveIsolatedScopeWithObjectWithTransclude', $scope),
+                f = InspectorHelpers.createDirective('directiveIsolatedScopeWithFunctionWithTransclude', $scope);
 
-             var element = $compile(nestedDirectives)($scope);
-             $scope.$digest();
+            var expectedScopeHierarchy = {};
+            //expectedScopeHierarchy[InspectorHelpers.getScopeId(a)] = ['alienToken', 'alienTokenObj', 'alienFun'];
+            /*expectedScopeHierarchy[InspectorHelpers.getScopeId(b)] = ['alienToken', 'alienTokenObj', 'alienFun'];
+            expectedScopeHierarchy[InspectorHelpers.getScopeId(c)] = [];
+            expectedScopeHierarchy[InspectorHelpers.getScopeId(d)] = ['token'];
+            expectedScopeHierarchy[InspectorHelpers.getScopeId(e)] = ['tokenobj'];
+            expectedScopeHierarchy[InspectorHelpers.getScopeId(f)] = ['fun'];*/
 
-             var result = Inspector.inspect();
-             //console.log(result);
-             */
+            var result = InspectorHelpers.testForPresentScopeMembers(expectedScopeHierarchy);
+            console.log(result);
         });
     });
 
