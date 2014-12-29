@@ -48,11 +48,7 @@ describe('Inspector', function () {
                 return function () {
                     var element = InspectorHelpers.createDirective(value, $scope);
                     expect(element).toBeDefined();
-
-                    var keys = Object.keys(element.isolateScope() || element.scope());
-                    expectedScopeHierarchy[val].forEach(function (element) {
-                        expect(keys).toContain(element);
-                    });
+                    expect(element.isolateScope() || element.scope()).toHaveMembers(expectedScopeHierarchy[val]);
                 };
             })(value));
         });
@@ -73,51 +69,52 @@ describe('Inspector', function () {
                 e = InspectorHelpers.createDirective('directiveIsolatedScopeWithObject', $scope),
                 f = InspectorHelpers.createDirective('directiveIsolatedScopeWithFunction', $scope);
 
-            var expectedScopeHierarchy = {};
-            expectedScopeHierarchy[InspectorHelpers.getScopeId(a)] = ['alienToken', 'alienTokenObj', 'alienFun'];
-            expectedScopeHierarchy[InspectorHelpers.getScopeId(b)] = ['alienToken', 'alienTokenObj', 'alienFun'];
-            expectedScopeHierarchy[InspectorHelpers.getScopeId(c)] = [];
-            expectedScopeHierarchy[InspectorHelpers.getScopeId(d)] = ['token'];
-            expectedScopeHierarchy[InspectorHelpers.getScopeId(e)] = ['tokenobj'];
-            expectedScopeHierarchy[InspectorHelpers.getScopeId(f)] = ['fun'];
+            expect(InspectorHelpers.getScope(a)).toHaveMembers(['alienToken', 'alienTokenObj', 'alienFun']);
+            expect(InspectorHelpers.getScope(b)).toHaveMembers(['alienToken', 'alienTokenObj', 'alienFun']);
+            expect(InspectorHelpers.getScope(c)).toBeCleanScope();
+            expect(InspectorHelpers.getScope(d)).toHaveMembers(['token']);
+            expect(InspectorHelpers.getScope(e)).toHaveMembers(['tokenobj']);
+            expect(InspectorHelpers.getScope(f)).toHaveMembers(['fun']);
 
-            InspectorHelpers.testForPresentScopeMembers(expectedScopeHierarchy);
-
-            var unexpectedScopeHierarchy = {};
-            unexpectedScopeHierarchy[InspectorHelpers.getScopeId(a)] = ['token', 'tokenobj', 'fun'];
-            unexpectedScopeHierarchy[InspectorHelpers.getScopeId(b)] = ['token', 'tokenobj', 'fun'];
-            unexpectedScopeHierarchy[InspectorHelpers.getScopeId(c)] = ['alienToken', 'alienTokenObj', 'alienFun', 'token', 'tokenobj', 'fun'];
-            unexpectedScopeHierarchy[InspectorHelpers.getScopeId(d)] = ['tokenobj'];
-            unexpectedScopeHierarchy[InspectorHelpers.getScopeId(e)] = ['token'];
-            unexpectedScopeHierarchy[InspectorHelpers.getScopeId(f)] = ['alienToken', 'alienTokenObj', 'alienFun', 'token', 'tokenobj'];
-
-            InspectorHelpers.testForAbsentScopeMembers(unexpectedScopeHierarchy);
+            expect(InspectorHelpers.getScope(a)).not.toHaveMembers(['token', 'tokenobj', 'fun']);
+            expect(InspectorHelpers.getScope(b)).not.toHaveMembers(['token', 'tokenobj', 'fun']);
+            expect(InspectorHelpers.getScope(c)).not.toHaveMembers(['alienToken', 'alienTokenObj', 'alienFun', 'token', 'tokenobj', 'fun']);
+            expect(InspectorHelpers.getScope(d)).not.toHaveMembers(['tokenobj']);
+            expect(InspectorHelpers.getScope(e)).not.toHaveMembers(['token']);
+            expect(InspectorHelpers.getScope(f)).not.toHaveMembers(['alienToken', 'alienTokenObj', 'alienFun', 'token', 'tokenobj']);
         });
 
         it('should create proper scopes with transcludes', function () {
             var a = InspectorHelpers.createDirective('directiveSharedScopeWithTransclude', $scope),
-                //b = InspectorHelpers.createDirective('directiveSharedScopeExplicitWithTransclude', $scope),
-                c = InspectorHelpers.createDirective('directiveIsolatedScopeWithTransclude', $scope);/*
+                b = InspectorHelpers.createDirective('directiveSharedScopeExplicitWithTransclude', $scope),
+                c = InspectorHelpers.createDirective('directiveIsolatedScopeWithTransclude', $scope),
                 d = InspectorHelpers.createDirective('directiveIsolatedScopeWithStringWithTransclude', $scope),
                 e = InspectorHelpers.createDirective('directiveIsolatedScopeWithObjectWithTransclude', $scope),
-                f = InspectorHelpers.createDirective('directiveIsolatedScopeWithFunctionWithTransclude', $scope);*/
+                f = InspectorHelpers.createDirective('directiveIsolatedScopeWithFunctionWithTransclude', $scope);
 
-            /*console.log(c);
-            var s = InspectorHelpers.getScope(c);
-            console.log(s);*/
+            expect(InspectorHelpers.getScope(a)).toHaveChildScopes();
+            expect(InspectorHelpers.getScope(a)).toHaveMembers(['alienToken','alienTokenObj','alienFun']);
+            expect(InspectorHelpers.getScope(a).$$childHead).toHaveInheritedMembers(['alienToken','alienTokenObj','alienFun']);
 
-            expect({}).toHaveMembers(['hello']);
+            expect(InspectorHelpers.getScope(b)).toHaveChildScopes();
+            expect(InspectorHelpers.getScope(b)).toHaveMembers(['alienToken','alienTokenObj','alienFun']);
+            expect(InspectorHelpers.getScope(b).$$childHead).toHaveInheritedMembers(['alienToken','alienTokenObj','alienFun']);
 
-            var expectedScopeHierarchy = {};
-            /*expectedScopeHierarchy[InspectorHelpers.getScopeId(a)] = ['alienToken', 'alienTokenObj', 'alienFun'];
-            expectedScopeHierarchy[InspectorHelpers.getScopeId(b)] = ['alienToken', 'alienTokenObj', 'alienFun'];
-            expectedScopeHierarchy[InspectorHelpers.getScopeId(c)] = [];
-            expectedScopeHierarchy[InspectorHelpers.getScopeId(d)] = ['token'];
-            expectedScopeHierarchy[InspectorHelpers.getScopeId(e)] = ['tokenobj'];
-            expectedScopeHierarchy[InspectorHelpers.getScopeId(f)] = ['fun'];*/
+            expect(InspectorHelpers.getScope(c)).toHaveChildScopes();
+            expect(InspectorHelpers.getScope(c)).toBeCleanScope();
+            expect(InspectorHelpers.getScope(c).$$childHead).toHaveInheritedMembers(['alienToken','alienTokenObj','alienFun']);
 
-            var result = InspectorHelpers.testForPresentScopeMembers(expectedScopeHierarchy);
-            console.log(result);
+            expect(InspectorHelpers.getScope(d)).toHaveChildScopes();
+            expect(InspectorHelpers.getScope(d)).toHaveMembers(['token']);
+            expect(InspectorHelpers.getScope(d).$$childHead).toHaveInheritedMembers(['alienToken','alienTokenObj','alienFun']);
+
+            expect(InspectorHelpers.getScope(e)).toHaveChildScopes();
+            expect(InspectorHelpers.getScope(e)).toHaveMembers(['tokenobj']);
+            expect(InspectorHelpers.getScope(e).$$childHead).toHaveInheritedMembers(['alienToken','alienTokenObj','alienFun']);
+
+            expect(InspectorHelpers.getScope(f)).toHaveChildScopes();
+            expect(InspectorHelpers.getScope(f)).toHaveMembers(['fun']);
+            expect(InspectorHelpers.getScope(f).$$childHead).toHaveInheritedMembers(['alienToken','alienTokenObj','alienFun']);
         });
     });
 
