@@ -106,6 +106,8 @@ describe('Inspector', function () {
             var s = InspectorHelpers.getScope(c);
             console.log(s);*/
 
+            expect({}).toHaveMembers(['hello']);
+
             var expectedScopeHierarchy = {};
             /*expectedScopeHierarchy[InspectorHelpers.getScopeId(a)] = ['alienToken', 'alienTokenObj', 'alienFun'];
             expectedScopeHierarchy[InspectorHelpers.getScopeId(b)] = ['alienToken', 'alienTokenObj', 'alienFun'];
