@@ -95,16 +95,20 @@ describe('Inspector', function () {
         });
 
         it('should create proper scopes with transcludes', function () {
-            var a = InspectorHelpers.createDirective('directiveSharedScopeWithTransclude', $scope);
-                b = InspectorHelpers.createDirective('directiveSharedScopeExplicitWithTransclude', $scope),
-                c = InspectorHelpers.createDirective('directiveIsolatedScopeWithTransclude', $scope),
+            var a = InspectorHelpers.createDirective('directiveSharedScopeWithTransclude', $scope),
+                //b = InspectorHelpers.createDirective('directiveSharedScopeExplicitWithTransclude', $scope),
+                c = InspectorHelpers.createDirective('directiveIsolatedScopeWithTransclude', $scope);/*
                 d = InspectorHelpers.createDirective('directiveIsolatedScopeWithStringWithTransclude', $scope),
                 e = InspectorHelpers.createDirective('directiveIsolatedScopeWithObjectWithTransclude', $scope),
-                f = InspectorHelpers.createDirective('directiveIsolatedScopeWithFunctionWithTransclude', $scope);
+                f = InspectorHelpers.createDirective('directiveIsolatedScopeWithFunctionWithTransclude', $scope);*/
+
+            /*console.log(c);
+            var s = InspectorHelpers.getScope(c);
+            console.log(s);*/
 
             var expectedScopeHierarchy = {};
-            //expectedScopeHierarchy[InspectorHelpers.getScopeId(a)] = ['alienToken', 'alienTokenObj', 'alienFun'];
-            /*expectedScopeHierarchy[InspectorHelpers.getScopeId(b)] = ['alienToken', 'alienTokenObj', 'alienFun'];
+            /*expectedScopeHierarchy[InspectorHelpers.getScopeId(a)] = ['alienToken', 'alienTokenObj', 'alienFun'];
+            expectedScopeHierarchy[InspectorHelpers.getScopeId(b)] = ['alienToken', 'alienTokenObj', 'alienFun'];
             expectedScopeHierarchy[InspectorHelpers.getScopeId(c)] = [];
             expectedScopeHierarchy[InspectorHelpers.getScopeId(d)] = ['token'];
             expectedScopeHierarchy[InspectorHelpers.getScopeId(e)] = ['tokenobj'];
