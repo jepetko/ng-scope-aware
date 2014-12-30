@@ -10,15 +10,25 @@ Inspects the scopes of the angular application and increases the awareness of th
 ## in your Jasmine tests
 
 * test for expected scope properties
-TODO
+
+```js
+expect(scope).toHaveMembers(['surname', 'address', 'city']);
+```
 
 * test for prototypically inherited properties
-TODO 
+
+```js
+expect(scope).toHaveInheritedMembers(['name']);
+```
 
 * test for property shadowing
 TODO
 
 * test for child scopes
-TODO
+
+```js
+expect(scope).toHaveChildScopes();
+```
+
 
 ## in your Code
