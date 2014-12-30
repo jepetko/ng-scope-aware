@@ -1,6 +1,8 @@
 ng-scope-aware
 ==============
 
+[About](#about)
+
 # About
 
 Inspects the scopes of the angular application and increases the awareness of the angular scopes
