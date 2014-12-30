@@ -9,6 +9,8 @@ Inspects the scopes of the angular application and increases the awareness of th
 
 ## in your Jasmine tests
 
+Use the custom matchers to check the structure of your scope.
+
 * test for expected scope properties
 
 ```js
@@ -22,7 +24,11 @@ expect(scope).toHaveInheritedMembers(['name']);
 ```
 
 * test for property shadowing
-TODO
+
+```js
+expect(scope).toShadow('');
+expect(scope).not.toShadow('');
+```
 
 * test for child scopes
 
@@ -30,5 +36,13 @@ TODO
 expect(scope).toHaveChildScopes();
 ```
 
+### Example 1 (ng-transclude)
+### Example 2 (ng-include)
+### Example 3 (ng-repeat)
+### Integration Example
 
 ## in your Code
+
+### Print the scope hierarchy
+
+### Check the warnings
