@@ -1,7 +1,10 @@
 ng-scope-aware
 ==============
 
-[About](#about)
+- [About](#about)
+- [Usage](#usage)
+  - [In your Jasmine tests](#in-your-jasmine-tests)
+  - [In your Code](#in-your-code)
 
 # About
 
