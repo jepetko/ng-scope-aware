@@ -104,7 +104,7 @@
             getScopeId: function (element) {
                 return this.getScope(element).$id;
             },
-            createDirective: function (type, scope) {
+            createDirective: function (type, scope, content) {
                 var htmlType = toDashed(type);
                 var transcludeMarker = 'WithTransclude';
                 var tpl;
@@ -112,7 +112,7 @@
                     tpl = htmlTemplates[type]();
                 } else {
                     if(type.substr(type.length-transcludeMarker.length) === transcludeMarker) {
-                        tpl = NodeBuilder.start(htmlType).addContent('<ul><li>transcluded</li></ul>').end();
+                        tpl = NodeBuilder.start(htmlType).addContent(content || '<ul><li>transcluded</li></ul>').end();
                     } else {
                         tpl = '<' + htmlType + '/>';
                     }

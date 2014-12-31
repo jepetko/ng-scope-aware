@@ -92,9 +92,12 @@ describe('Inspector', function () {
                 e = InspectorHelpers.createDirective('directiveIsolatedScopeWithObjectWithTransclude', $scope),
                 f = InspectorHelpers.createDirective('directiveIsolatedScopeWithFunctionWithTransclude', $scope);
 
+            var result = Inspector.inspect();
             expect(InspectorHelpers.getScope(a)).toHaveChildScopes();
             expect(InspectorHelpers.getScope(a)).toHaveMembers(['alienToken','alienTokenObj','alienFun']);
+            //scope created by ng-transclude
             expect(InspectorHelpers.getScope(a).$$childHead).toHaveInheritedMembers(['alienToken','alienTokenObj','alienFun']);
+            expect(InspectorHelpers.getScope(a).$$childHead).toPossiblyShadow(['alienToken','alienTokenObj','alienFun']);
 
             expect(InspectorHelpers.getScope(b)).toHaveChildScopes();
             expect(InspectorHelpers.getScope(b)).toHaveMembers(['alienToken','alienTokenObj','alienFun']);
@@ -115,6 +118,42 @@ describe('Inspector', function () {
             expect(InspectorHelpers.getScope(f)).toHaveChildScopes();
             expect(InspectorHelpers.getScope(f)).toHaveMembers(['fun']);
             expect(InspectorHelpers.getScope(f).$$childHead).toHaveInheritedMembers(['alienToken','alienTokenObj','alienFun']);
+        });
+
+        describe('ng-repeat', function() {
+
+            var scope, scopeTranscluded;
+            beforeEach(function() {
+                $scope.alienArr = ['A', 'B', 'C'];
+                var a = InspectorHelpers.createDirective('directiveSharedScopeWithTransclude', $scope, '<ul><li ng-repeat="el in alienArr">{{el}}</li></ul>');
+                scope = InspectorHelpers.getScope(a);
+                scopeTranscluded = scope.$$childHead;
+            });
+
+            it('creates 3 scopes because alienArr contains 3 elements', function() {
+                expect(scope).toHaveChildScopes();
+                expect(scopeTranscluded).toHaveChildScopes();
+                var count = 0;
+                var result = Inspector.inspect(scope.$$childHead, function(id,data) {
+                    if(id === scopeTranscluded.$id) {
+                        return;
+                    }
+                    count++;
+                });
+                expect(count).toBe(3);
+            });
+
+            it('should possibly shadow property of the parent scope', function() {
+                var firstRepeatScope = scope.$$childHead.$$childHead;
+                expect(firstRepeatScope).toPossiblyShadow(['alienToken']);
+            });
+
+            it('shout shadow properties of the parent scope when the property is set', function() {
+                var firstRepeatScope = scope.$$childHead.$$childHead;
+                expect(firstRepeatScope).not.toShadow(['alienToken']);
+                firstRepeatScope.alienToken = 'Overridden';
+                expect(firstRepeatScope).toShadow(['alienToken']);
+            });
         });
     });
 
