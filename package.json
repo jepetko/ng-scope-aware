@@ -33,6 +33,7 @@
         "karma-spec-reporter": "~0.0.13",
         "karma-story-reporter": "~0.2.2",
         "grunt-contrib-jshint": "~0.6.0",
+        "grunt-contrib-uglify": "~0.2.0",
         "grunt-githooks": "~0.3.1"
     },
     "keywords": [
