@@ -39,8 +39,7 @@ module.exports = function(grunt) {
         },
         githooks: {
             all: {
-                'pre-commit': 'jshint karma',
-                'pre-push': 'uglify'
+                'pre-commit': 'jshint karma uglify'
             }
         }
     });
