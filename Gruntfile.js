@@ -33,7 +33,7 @@ module.exports = function(grunt) {
             },
             js: {
                 files: {
-                    'dist/ng-scope-aware.js': [ 'lib/*js']
+                    'dist/ng-scope-aware.js': ['lib/*js']
                 }
             }
         },
