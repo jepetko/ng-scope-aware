@@ -9,7 +9,6 @@
         "type": "git",
         "url": "https://github.com/jepetko/ng-scope-aware.git"
     },
-    "main": "./lib/index",
     "scripts": {
         "test": "grunt"
     },
