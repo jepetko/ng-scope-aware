@@ -8,7 +8,8 @@ ng-scope-aware
 
 # About
 
-Inspects the scopes of the angular application and increases the awareness of the angular scopes
+Inspects the scopes of the angular application and increases the awareness of the angular scopes. The angular scope is the model keeping the data of your application. It reflects how data are shared by the particular components and from where the access to them takes place.
+Use this npm package to test the scopes (aka your models).
 
 # Usage
 
@@ -30,6 +31,11 @@ expect(scope).toHaveInheritedMembers(['name']);
 
 * test for property shadowing
 
+Property could be shadowed:
+```js
+expect(scope).toPossiblyShadow('');
+```
+Property is shadowed:
 ```js
 expect(scope).toShadow('');
 expect(scope).not.toShadow('');
