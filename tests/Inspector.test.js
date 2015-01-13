@@ -140,6 +140,7 @@ describe('Inspector', function () {
                     }
                     count++;
                 });
+                console.log(result);
                 expect(count).toBe(3);
             });
 

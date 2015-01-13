@@ -118,6 +118,7 @@
                     }
                 }
                 var element = $compile(tpl)(scope);
+                angular.element(document.body).append(element);
                 scope.$digest();
                 return element;
             }
