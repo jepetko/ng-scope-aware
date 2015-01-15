@@ -117,7 +117,8 @@
                         tpl = '<' + htmlType + '/>';
                     }
                 }
-                var element = $compile(tpl)(scope);
+                var el = angular.element(tpl);
+                var element = $compile(el)(scope);
                 angular.element(document.body).append(element);
                 scope.$digest();
                 return element;
