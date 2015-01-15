@@ -97,7 +97,7 @@ describe('Inspector', function () {
             expect(InspectorHelpers.getScope(a)).toHaveMembers(['alienToken','alienTokenObj','alienFun']);
             //scope created by ng-transclude
             expect(InspectorHelpers.getScope(a).$$childHead).toHaveInheritedMembers(['alienToken','alienTokenObj','alienFun']);
-            expect(InspectorHelpers.getScope(a).$$childHead).toPossiblyShadow(['alienToken','alienTokenObj','alienFun']);
+            expect(InspectorHelpers.getScope(a).$$childHead).toPossiblyShadow(['alienToken']);
 
             expect(InspectorHelpers.getScope(b)).toHaveChildScopes();
             expect(InspectorHelpers.getScope(b)).toHaveMembers(['alienToken','alienTokenObj','alienFun']);
