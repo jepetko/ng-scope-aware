@@ -1,7 +1,7 @@
 (function() {
     "use strict";
 
-    angular.module('inspector-test-helpers',['inspector-test-mocks', 'scope-aware'])
+    angular.module('inspector-test-helpers',['inspector-test-mocks'])
     .service('NodeBuilder', [function() {
         var nodeName = '', attrs = {}, content = '';
         return {
@@ -29,7 +29,7 @@
             }
         };
     }])
-    .service('InspectorHelpers', ['$compile', 'Inspector', 'NodeBuilder', function($compile, Inspector, NodeBuilder) {
+    .service('InspectorHelpers', ['$compile', 'NodeBuilder', function($compile, NodeBuilder) {
 
         var toCamelCase = function (str) {
             if (typeof str === 'undefined') {

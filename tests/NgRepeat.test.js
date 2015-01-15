@@ -2,18 +2,17 @@ describe('Inspector abilities for ngRepeat scope problems', function () {
 
     "use strict";
 
-    var $rootScope, $compile, Inspector, InspectorHelpers;
+    var $rootScope, $compile, Inspector;
 
     beforeEach(function () {
         module('inspector-test-helpers');
         module('scope-aware');
     });
 
-    beforeEach(inject(function (_$rootScope_, _$compile_, _Inspector_, _InspectorHelpers_) {
+    beforeEach(inject(function (_$rootScope_, _$compile_, _Inspector_) {
         $rootScope = _$rootScope_;
         $compile = _$compile_;
         Inspector = _Inspector_;
-        InspectorHelpers = _InspectorHelpers_;
     }));
 
     describe('usage of primitives', function () {
@@ -65,6 +64,9 @@ describe('Inspector abilities for ngRepeat scope problems', function () {
             element = $compile(el)($scope);
             angular.element(document.body).append(element);
             $scope.$digest();
+        });
+        afterEach(function() {
+            console.log(Inspector.inspect($scope));
         });
 
         it("doesnt change the original value",function() {

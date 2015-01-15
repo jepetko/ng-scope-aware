@@ -79,5 +79,9 @@
         var retVal = angular.extend(dest, defaultDirectiveTranscludeReturnValue);
         retVal.template = '<div><div ng-click="fun()">{{token}}</div><p ng-transclude></p></div>';
         return retVal;
-    });
+    })
+    .controller('Ctrl', ['$scope', function($scope) {
+        $scope.primitive = 'val';
+        $scope.obj = { key : 'val' };
+    }]);
 })();
