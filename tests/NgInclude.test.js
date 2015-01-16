@@ -37,7 +37,7 @@ describe('Inspector abilities for ngInclude scope problems', function () {
         });
 
         afterEach(function() {
-            console.log(Inspector.inspect($scope));
+            //console.log(Inspector.inspect($scope));
         });
 
         it("doesnt change the original value",function() {
@@ -75,7 +75,7 @@ describe('Inspector abilities for ngInclude scope problems', function () {
         });
 
         afterEach(function() {
-            console.log(Inspector.inspect($scope));
+            //console.log(Inspector.inspect($scope));
         });
 
         it("doesnt change the original value",function() {

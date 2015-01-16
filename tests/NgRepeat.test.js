@@ -66,7 +66,7 @@ describe('Inspector abilities for ngRepeat scope problems', function () {
             $scope.$digest();
         });
         afterEach(function() {
-            console.log(Inspector.inspect($scope));
+            //console.log(Inspector.inspect($scope));
         });
 
         it("doesnt change the original value",function() {

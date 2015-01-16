@@ -14,7 +14,18 @@
         'template' : '<div>{{token}}<p ng-transclude></p></div>'
     };
 	
-	angular.module('inspector-test-mocks', [])
+	angular.module('inspector-test-mocks', ['ngRoute'])
+    .config( ['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+        $routeProvider
+            .when('/primitive', {
+                template: '<input ng-model="primitive">'
+            })
+            .when('/object', {
+                templateUrl: '<input ng-model="obj.key">'
+            })
+            .otherwise({redirectTo: '/index'});
+        $locationProvider.html5Mode(true);
+    }])
 	.directive('directiveSharedScope', function() {
 		return angular.extend({}, defaultDirectiveReturnValue);
 	})
