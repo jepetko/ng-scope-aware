@@ -13,7 +13,7 @@ describe('Inspector abilities for ngInclude scope problems', function () {
         $rootScope = _$rootScope_;
         $compile = _$compile_;
         Inspector = _Inspector_;
-        _$templateCache_.put('tpl.html', '<div><input ng-model="primitive"></div>');
+        _$templateCache_.put('tpl', '<div><input ng-model="primitive"></div>');
     }));
 
     describe('usage of primitives', function () {
@@ -25,15 +25,12 @@ describe('Inspector abilities for ngInclude scope problems', function () {
             Ctrl = $controller('Ctrl', {
                 '$scope' : $scope
             });
-            $scope.primitive = 'val';
+            $scope.primitive = 'a';
 
-            var tpl = "<p><div ng-include=\" 'tpl.html' \"></div></p>";
-            //el = angular.element(tpl);
-            element = $compile(tpl)($scope);
+            var tpl = "<div><div ng-include=\" 'tpl' \"></div></div>";
+            el = angular.element(tpl);
+            element = $compile(el)($scope);
             $scope.$digest();
-
-            console.log(element);
-            //console.log(el.find('ul'));
         })));
 
         afterEach(function() {
@@ -41,8 +38,7 @@ describe('Inspector abilities for ngInclude scope problems', function () {
         });
 
         it("doesnt change the original value",function() {
-            /*
-            var input = el.find('input')[0];
+            var input = element.find('input')[0];
             var scope = angular.element(input).scope();
             angular.element(input).val('AAA').triggerHandler('input');
             $scope.$digest();
@@ -52,16 +48,16 @@ describe('Inspector abilities for ngInclude scope problems', function () {
             expect(scope.$parent).toBe($scope);
 
             //the value in the parent scope is still 'a' because primitives are used
-            expect(scope.val).toBe('AAA');
-            expect($scope.values[0]).toBe('a');
+            expect(scope.primitive).toBe('AAA');
+            expect($scope.primitive).toBe('a');
 
             //additional tests (ng-scope-aware)
-            expect(scope).toHaveMembers(['val']);
-            expect(scope).toHaveInheritedMembers(['values']);
+            expect(scope).toHaveMembers(['primitive']);
+            expect(scope).not.toHaveInheritedMembers(['primitive']);
             expect(scope).toShadow(['primitive']);
-            */
         });
     });
+
     /*
     describe('usage of objects', function () {
         var $scope, el, element;
