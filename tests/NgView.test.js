@@ -7,6 +7,7 @@ describe('Inspector abilities for ngView scope problems', function () {
     var createNgView = function() {
         var tpl = '<div><div ng-view></div></div>';
         var element = $compile(tpl)($scope);
+        angular.element(document.body).append(element);
         $rootScope.$digest();
         return element;
     };
