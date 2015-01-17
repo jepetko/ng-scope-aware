@@ -25,14 +25,13 @@ describe('Inspector abilities for ngInclude scope problems', function () {
 
     describe('usage of primitives', function () {
 
-        var el, element;
+        var element;
         beforeEach(function () {
 
             $scope.primitive = 'a';
 
             var tpl = "<div><div ng-include=\" 'primitive.tpl' \"></div></div>";
-            el = angular.element(tpl);
-            element = $compile(el)($scope);
+            element = $compile(tpl)($scope);
             $scope.$digest();
         });
 
@@ -63,14 +62,13 @@ describe('Inspector abilities for ngInclude scope problems', function () {
 
     describe('usage of objects', function () {
 
-        var el, element;
+        var element;
         beforeEach(function() {
 
             $scope.obj = { key : 'a' };
 
             var tpl = "<div><div ng-include=\" 'object.tpl' \"></div></div>";
-            el = angular.element(tpl);
-            element = $compile(el)($scope);
+            element = $compile(tpl)($scope);
             $scope.$digest();
         });
 
