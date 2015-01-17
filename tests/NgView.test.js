@@ -42,7 +42,7 @@ describe('Inspector abilities for ngView scope problems', function () {
             console.log(Inspector.inspect($scope));
         });
 
-        it("doesnt change the original value",function() {
+        it("doesn't change the original value",function() {
 
             var input = element.find('input')[0];
             var scope = angular.element(input).scope();
@@ -77,7 +77,7 @@ describe('Inspector abilities for ngView scope problems', function () {
             console.log(Inspector.inspect($scope));
         });
 
-        it("doesnt change the original value",function() {
+        it("changes the original value",function() {
             var input = element.find('input')[0];
             var scope = angular.element(input).scope();
             angular.element(input).val('AAA').triggerHandler('input');
