@@ -33,10 +33,11 @@ describe('Inspector abilities for ngInclude scope problems', function () {
             var tpl = "<div><div ng-include=\" 'primitive.tpl' \"></div></div>";
             element = $compile(tpl)($scope);
             $scope.$digest();
+            angular.element(document.body).append(element);
         });
 
         afterEach(function() {
-            //console.log(Inspector.inspect($scope));
+            console.log(Inspector.inspect($scope));
         });
 
         it("doesnt change the original value",function() {
@@ -70,10 +71,11 @@ describe('Inspector abilities for ngInclude scope problems', function () {
             var tpl = "<div><div ng-include=\" 'object.tpl' \"></div></div>";
             element = $compile(tpl)($scope);
             $scope.$digest();
+            angular.element(document.body).append(element);
         });
 
         afterEach(function() {
-            //console.log(Inspector.inspect($scope));
+            console.log(Inspector.inspect($scope));
         });
 
         it("doesnt change the original value",function() {
