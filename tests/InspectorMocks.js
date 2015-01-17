@@ -21,7 +21,7 @@
                 template: '<input ng-model="primitive">'
             })
             .when('/object', {
-                templateUrl: '<input ng-model="obj.key">'
+                template: '<input ng-model="obj.key">'
             })
             .otherwise({redirectTo: '/index'});
         $locationProvider.html5Mode(true);
