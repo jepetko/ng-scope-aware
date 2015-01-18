@@ -94,5 +94,7 @@
     .controller('Ctrl', ['$scope', function($scope) {
         $scope.primitive = 'val';
         $scope.obj = { key : 'val' };
+    }])
+    .controller('SubCtrl',['$scope', function($scope) {
     }]);
 })();
