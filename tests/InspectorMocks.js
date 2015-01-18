@@ -4,14 +4,14 @@
 	var defaultDirectiveReturnValue = {
 			'restrict' : 'AE',
 			'replace': true,
-			'template' : '<div>{{token}}</div>'
+			'template' : '<div>{{token}}<input ng-model="token"></div>'
 	};
 
     var defaultDirectiveTranscludeReturnValue = {
         'restrict' : 'AE',
         'replace': true,
         'transclude': true,
-        'template' : '<div>{{token}}<p ng-transclude></p></div>'
+        'template' : '<div>{{token}}<input ng-model="token"><p ng-transclude></p></div>'
     };
 	
 	angular.module('inspector-test-mocks', ['ngRoute'])
@@ -45,7 +45,7 @@
                         }
 					};
 		var retVal = angular.extend(dest, defaultDirectiveReturnValue);
-		retVal.template = '<div>{{tokenobj.token}}</div>';
+		retVal.template = '<div>{{tokenobj.token}}<input ng-model="tokenobj.token"></div>';
 		return retVal;
 	})
 	.directive('directiveIsolatedScopeWithFunction', function() {
