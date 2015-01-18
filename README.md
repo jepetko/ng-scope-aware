@@ -174,6 +174,7 @@ describe('usage of objects', function () {
 ### Example 2 (ng-include)
 
 **ng-include** will create a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
+
 **Note**: templates must be present in your $templateCache. In this example a template is added in beforeEach method as follows:
 ```js
 $templateCache.put('primitive.tpl', '<div><input ng-model="primitive"></div>');
@@ -182,6 +183,7 @@ $templateCache.put('object.tpl', '<div><input ng-model="obj.key"></div>');
 
 [NgInclude.test.js](tests/NgInclude.test.js)
 
+#### using primitives
 
 ```js
 describe('usage of primitives', function () {
@@ -195,10 +197,6 @@ describe('usage of primitives', function () {
         element = $compile(tpl)($scope);
         $scope.$digest();
         angular.element(document.body).append(element);
-    });
-
-    afterEach(function() {
-        console.log(Inspector.inspect($scope));
     });
 
     it("doesn't change the original value",function() {
@@ -220,10 +218,51 @@ describe('usage of primitives', function () {
 ```
 
 **Note**: property 'primitive' is shadowed because we typed a value into the input field which is bounded to the 'primitive' property. 
-This will create a new property in the child scope. The parent scope property is not affected. 
+This will create a new property in the child scope (scope). The parent scope property ($scope) is not affected. 
 Therefore 
 ```js
 expect(scope).toShadow('primitive');
+```
+will pass.
+
+#### using objects
+
+```js
+describe('usage of objects', function () {
+
+    var element;
+    beforeEach(function() {
+
+        $scope.obj = { key : 'a' };
+
+        var tpl = "<div><div ng-include=\" 'object.tpl' \"></div></div>";
+        element = $compile(tpl)($scope);
+        $scope.$digest();
+        angular.element(document.body).append(element);
+    });
+    
+    it("changes the original value",function() {
+        var input = element.find('input')[0];
+        var scope = angular.element(input).scope();
+        angular.element(input).val('AAA').triggerHandler('input');
+        $scope.$digest();
+
+        //the value in the parent scope is changed as well
+        expect(scope.obj.key).toBe('AAA');
+        expect($scope.obj.key).toBe('AAA');
+
+        //additional tests (ng-scope-aware)
+        expect(scope).toHaveMembers('obj');
+        expect(scope).toHaveInheritedMembers('obj');
+        expect(scope).not.toShadow('obj');
+    });
+});
+```
+**Note**: property 'obj' is *NOT* shadowed because we are using 'obj' as model of the input field. When typing a new value the original object is changed. 
+The parent scope property ($scope) is affected. 
+Therefore 
+```js
+expect(scope).not.toShadow('obj');
 ```
 will pass.
 
@@ -247,6 +286,10 @@ angular.module('my-module', ['ngRoute'])
     $locationProvider.html5Mode(true);
 }])
 ```
+
+#### using primitives
+
+#### using objects
 
 ### Example 4 (ng-switch)
 ### Example 5 (directive with shared scope)
