@@ -95,7 +95,7 @@ expect(scope).toHaveChildScopes();
 
 ### Example 1 (ng-repeat)
 
-**ng-repeat** will create a new scope per item. Your keys should be objects otherwise changes made in child scope have no effect to the parent scope.
+**ng-repeat** will create a new child scope per item. Your keys should be objects otherwise changes made in child scope have no effect to the parent scope.
  
 [NgRepeat.test.js](tests/NgRepeat.test.js)
 
@@ -172,7 +172,82 @@ describe('usage of objects', function () {
 ```
 
 ### Example 2 (ng-include)
+
+**ng-include** will create a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
+**Note**: templates must be present in your $templateCache. In this example a template is added in beforeEach method as follows:
+```js
+$templateCache.put('primitive.tpl', '<div><input ng-model="primitive"></div>');
+$templateCache.put('object.tpl', '<div><input ng-model="obj.key"></div>');
+```
+
+[NgInclude.test.js](tests/NgInclude.test.js)
+
+
+```js
+describe('usage of primitives', function () {
+
+    var element;
+    beforeEach(function () {
+
+        $scope.primitive = 'a';
+
+        var tpl = "<div><div ng-include=\" 'primitive.tpl' \"></div></div>";
+        element = $compile(tpl)($scope);
+        $scope.$digest();
+        angular.element(document.body).append(element);
+    });
+
+    afterEach(function() {
+        console.log(Inspector.inspect($scope));
+    });
+
+    it("doesn't change the original value",function() {
+        var input = element.find('input')[0];
+        var scope = angular.element(input).scope();
+        angular.element(input).val('AAA').triggerHandler('input');
+        $scope.$digest();
+
+        //the value in the parent scope is still 'a' because primitives are used
+        expect(scope.primitive).toBe('AAA');
+        expect($scope.primitive).toBe('a');
+
+        //additional tests (ng-scope-aware)
+        expect(scope).toHaveMembers('primitive');
+        expect(scope).not.toHaveInheritedMembers('primitive');
+        expect(scope).toShadow('primitive');
+    });
+});
+```
+
+**Note**: property 'primitive' is shadowed because we typed a value into the input field which is bounded to the 'primitive' property. 
+This will create a new property in the child scope. The parent scope property is not affected. 
+Therefore 
+```js
+expect(scope).toShadow('primitive');
+```
+will pass.
+
 ### Example 3 (ng-view)
+
+**ng-view** will create a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
+
+**Note**: in this case the tested module has to configure routing, e.g.:
+
+```js
+angular.module('my-module', ['ngRoute'])
+.config( ['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+    $routeProvider
+        .when('/primitive', {
+            template: '<input ng-model="primitive">'
+        })
+        .when('/object', {
+            template: '<input ng-model="obj.key">'
+        })
+        .otherwise({redirectTo: '/index'});
+    $locationProvider.html5Mode(true);
+}])
+```
+
 ### Example 4 (ng-switch)
 ### Example 5 (directive with shared scope)
 ### Example 6 (directive with own scope)
