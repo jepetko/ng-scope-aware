@@ -44,8 +44,8 @@ describe('Inspector abilities for ngRepeat scope problems', function () {
             expect($scope.values[0]).toBe('a');
 
             //additional tests (ng-scope-aware)
-            expect(scope).toHaveMembers(['val']);
-            expect(scope).toHaveInheritedMembers(['values']);
+            expect(scope).toHaveMembers('val');
+            expect(scope).toHaveInheritedMembers('values');
             //NOTE: the test .toShadow(['val']) doesn't make any sense
             //because ng-repeat behaves independently no matter whether val is Object or a primitive
             //this works as designed.
@@ -85,9 +85,9 @@ describe('Inspector abilities for ngRepeat scope problems', function () {
 
             //additional tests (ng-scope-aware)
             //.. creates an own member 'val'
-            expect(scope).toHaveMembers(['val']);
+            expect(scope).toHaveMembers('val');
             //.. inherits 'values' but not 'val'
-            expect(scope).toHaveInheritedMembers(['values']);
+            expect(scope).toHaveInheritedMembers('values');
             //NOTE: the test not.toShadow(['val']) doesn't make any sense
             //because ng-repeat behaves independently no matter whether val is Object or a primitive
             //this works as designed.

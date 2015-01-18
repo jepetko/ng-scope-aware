@@ -55,9 +55,9 @@ describe('Inspector abilities for ngInclude scope problems', function () {
             expect($scope.primitive).toBe('a');
 
             //additional tests (ng-scope-aware)
-            expect(scope).toHaveMembers(['primitive']);
-            expect(scope).not.toHaveInheritedMembers(['primitive']);
-            expect(scope).toShadow(['primitive']);
+            expect(scope).toHaveMembers('primitive');
+            expect(scope).not.toHaveInheritedMembers('primitive');
+            expect(scope).toShadow('primitive');
         });
     });
 
@@ -93,9 +93,9 @@ describe('Inspector abilities for ngInclude scope problems', function () {
             expect($scope.obj.key).toBe('AAA');
 
             //additional tests (ng-scope-aware)
-            expect(scope).toHaveMembers(['obj']);
-            expect(scope).toHaveInheritedMembers(['obj']);
-            expect(scope).not.toShadow(['obj']);
+            expect(scope).toHaveMembers('obj');
+            expect(scope).toHaveInheritedMembers('obj');
+            expect(scope).not.toShadow('obj');
         });
     });
 });

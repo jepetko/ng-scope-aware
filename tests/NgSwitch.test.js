@@ -57,9 +57,9 @@ describe('Inspector abilities for ngSwitch scope problems', function () {
             expect($scope.primitive).toBe('a');
 
             //additional tests (ng-scope-aware)
-            expect(scope).toHaveMembers(['primitive']);
-            expect(scope).not.toHaveInheritedMembers(['primitive']);
-            expect(scope).toShadow(['primitive']);
+            expect(scope).toHaveMembers('primitive');
+            expect(scope).not.toHaveInheritedMembers('primitive');
+            expect(scope).toShadow('primitive');
         });
     });
 
@@ -102,11 +102,11 @@ describe('Inspector abilities for ngSwitch scope problems', function () {
 
             //additional tests (ng-scope-aware)
             //.. it has a member 'obj'
-            expect(scope).toHaveMembers(['obj']);
+            expect(scope).toHaveMembers('obj');
             //.. inherits 'obj' from the parent scope (prototypal inheritance)
-            expect(scope).toHaveInheritedMembers(['obj']);
+            expect(scope).toHaveInheritedMembers('obj');
             //.. doesn't shadow the property 'obj' because the inherited property is used when the input value is inserted
-            expect(scope).not.toShadow(['obj']);
+            expect(scope).not.toShadow('obj');
         });
     });
 });
