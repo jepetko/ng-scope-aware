@@ -38,7 +38,7 @@ describe('Inspector abilities for ngDirective({scope:{...}}) scope behavior', fu
             expect(scope).not.toBe($scope);
             expect(scope.$parent).toBe($scope);
 
-            //the value of token in the paren scope is still 'a' because the property has been shadowed
+            //the value of token in the parent scope is still 'a' because there token is referenced by '@' (string)
             expect(scope.token).toBe('AAA');
             expect($scope.token).toBe('a');
 
