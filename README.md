@@ -81,11 +81,11 @@ expect(scope).toHaveInheritedMembers('name');
 
 * test for property shadowing
 
-Property could be shadowed:
+- Property could be shadowed:
 ```js
 expect(scope).toPossiblyShadow('token');
 ```
-Property is shadowed:
+- Property is shadowed:
 ```js
 expect(scope).toShadow('token');
 expect(scope).not.toShadow('token');
