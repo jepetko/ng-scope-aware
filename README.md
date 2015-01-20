@@ -99,7 +99,7 @@ expect(scope).toHaveChildScopes();
 
 ### ng-repeat
 
-**ng-repeat** will create a new child scope per item. Your keys should be objects otherwise changes made in child scope have no effect to the parent scope.
+**ng-repeat** creates a new child scope per item. Your keys should be objects otherwise changes made in child scope have no effect to the parent scope.
  
 [NgRepeat.test.js](tests/NgRepeat.test.js)
 
@@ -244,7 +244,7 @@ describe('usage of primitives', function () {
 ```
 
 **Note**: property `primitive` is shadowed because a new text is inserted into the input field which is bounded to the `primitive` property. 
-This will create a new property in the child scope (`scope`). The parent scope property (`$scope`) is not affected. 
+This creates a new property in the child scope (`scope`). The parent scope property (`$scope`) is not affected. 
 Therefore 
 ```js
 expect(scope).toShadow('primitive');
@@ -294,7 +294,7 @@ will pass.
 
 ### ng-view
 
-**ng-view** will create a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
+**ng-view** creates a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
 
 **Note**: in this case the tested module has to configure routing, e.g.:
 
@@ -382,7 +382,7 @@ describe('usage of objects', function () {
 
 ### ng-switch
 
-**ng-switch** will create a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
+**ng-switch** creates a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
 
 #### using primitives
 
