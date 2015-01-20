@@ -9,7 +9,7 @@ THIS IS WORK IN PROGRESS.
     - [ng-repeat](#ng-repeat)
     - [ng-include](#ng-include)
     - [ng-view](#ng-view)
-    - [directive with shared scope](#directive with shared scope)
+    - [directive with shared scope](#directive-with-shared-scope)
   - [In your Code](#in-your-code)
 
 # About
@@ -475,6 +475,17 @@ describe('usage of objects', function () {
 
 Directives with shared scope don't create any new scope. They operate on the properties of the present scope.
 
+The used directive is configured as follows:
+```js
+.directive('directiveSharedScope', function() {
+    return {
+        'restrict' : 'AE',
+        'replace': true,
+        'template' : '<div>{{token}}<input ng-model="token"></div>'
+    };	
+ })
+```
+
 #### using primitives or objects
 
 ```js
@@ -516,7 +527,7 @@ it("clobbers the shared properties", function () {
 ```
 *Note*: if you are wondering why we don't test
 ```js
-    expect(scope).not.toHaveInheritedMembers('token');  //because the is no inheritance at all
+    expect(scope).not.toHaveInheritedMembers('token');
     expect(scope).not.toShadow('token');
 ```
 it's because we would test the shared scope (coming from outside) which doesn't make a sense in terms of the directive test case.
