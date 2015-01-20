@@ -199,7 +199,7 @@ and that new child scope always gets a new property.
 
 ### ng-include
 
-**ng-include** will create a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
+**ng-include** creates a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
 
 **Note**: templates must be present in your `$templateCache`. In this example templates are added in `beforeEach` method as follows:
 ```js
