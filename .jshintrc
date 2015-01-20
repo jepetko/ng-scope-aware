@@ -13,5 +13,6 @@
   "node": true,
   "es5": false,
   "multistr": true,
-  "smarttabs":false
+  "smarttabs":false,
+  "proto": false
 }

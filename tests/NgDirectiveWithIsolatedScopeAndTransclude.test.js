@@ -77,7 +77,11 @@ describe('Inspector abilities for ngDirective({scope:{...}}) scope behavior', fu
             $scope.$digest();
 
             //Note: transclude will create a new child scope which is child of the isolate scope
-            //TODO: copy it from angular JS page
+            //
+            //From guide: https://docs.angularjs.org/api/ng/service/$compile
+            // "When you call a transclude function it returns a DOM fragment that is pre-bound to a transclusion scope.
+            // This scope is special, in that it is a child of the directive's scope (and so gets destroyed when the directive's
+            // scope gets destroyed) but it inherits the properties of the scope from which it was taken."
             expect(scope.$parent.$parent).toBe($scope);
 
             //the value of token in the parent scope is 'AAA' because object is used (= operator for isolated scope)
