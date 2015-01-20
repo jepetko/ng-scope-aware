@@ -287,11 +287,163 @@ angular.module('my-module', ['ngRoute'])
 }])
 ```
 
+[NgView.test.js](tests/NgView.test.js)
+
 #### using primitives
+
+```js
+describe('usage of primitives', function () {
+
+    beforeEach(inject(function($location) {
+        $scope.primitive = 'a';
+
+        $location.path('/primitive');
+        $rootScope.$digest();
+    }));
+
+    it("doesn't change the original value",function() {
+
+        var input = element.find('input')[0];
+        var scope = angular.element(input).scope();
+        angular.element(input).val('AAA').triggerHandler('input');
+        $scope.$digest();
+
+        //the value in the parent scope is still 'a' because primitives are used
+        expect(scope.primitive).toBe('AAA');
+        expect($scope.primitive).toBe('a');
+
+        //additional tests (ng-scope-aware)
+        expect(scope).toHaveMembers('primitive');
+        expect(scope).not.toHaveInheritedMembers('primitive');
+        expect(scope).toShadow('primitive');
+    });
+});
+```
+
+**Note:** the property "primitive" is shadowed because it's a primitive.
 
 #### using objects
 
+```js
+describe('usage of objects', function () {
+
+    beforeEach(inject(function ($location) {
+        $scope.obj = { key : 'a' };
+
+        $location.path('/object');
+        $rootScope.$digest();
+    }));
+    
+    it("changes the original value",function() {
+        var input = element.find('input')[0];
+        var scope = angular.element(input).scope();
+        angular.element(input).val('AAA').triggerHandler('input');
+        $scope.$digest();
+
+        //the value in the parent scope is changed as well
+        expect(scope.obj.key).toBe('AAA');
+        expect($scope.obj.key).toBe('AAA');
+
+        //additional tests (ng-scope-aware)
+        expect(scope).toHaveMembers('obj');
+        expect(scope).toHaveInheritedMembers('obj');
+        expect(scope).not.toShadow('obj');
+    });
+});
+```
+
+**Note:** the property "obj" is not shadowed because it's an object.
+
 ### Example 4 (ng-switch)
+
+**ng-switch** will create a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
+
+#### using primitives
+
+```js
+describe('usage of primitives', function () {
+
+    var element;
+    beforeEach(function () {
+        $scope.primitive = 'a';
+
+        var tpl = '<div ng-switch on="primitive">' +
+                        '<div ng-switch-when="a">A<input ng-model="primitive"></div>' +
+                        '<div ng-switch-when="b">B</div>' +
+                        '<div ng-switch-when="c">C</div>' +
+                    '</div>';
+        element = $compile(tpl)($scope);
+        $scope.$digest();
+    });
+
+    it("doesn't change the original value",function() {
+        var input = element.find('input')[0];
+        var scope = angular.element(input).scope();
+        angular.element(input).val('b').triggerHandler('input');
+        $scope.$digest();
+
+        //the 'A' element is still selected because we didn't change the original property value
+        expect(angular.element(element.children()[0]).text()).toBe('A');
+
+        //the value in the parent scope is still 'a' because primitives are used
+        expect(scope.primitive).toBe('b');
+        expect($scope.primitive).toBe('a');
+
+        //additional tests (ng-scope-aware)
+        expect(scope).toHaveMembers('primitive');
+        expect(scope).not.toHaveInheritedMembers('primitive');
+        expect(scope).toShadow('primitive');
+    });
+});
+```
+
+**Note:** `$scope.primitive` is still `'a'` because a new property `primitive` has been created on the `ng-switch` scope. Hence `$scope.primitive` is shadowed.
+
+#### using objects
+
+```js
+describe('usage of objects', function () {
+    var element;
+    beforeEach(function () {
+
+        $scope.obj = {key: 'a'};
+
+        var tpl = '<div ng-switch on="obj.key">' +
+                        '<div ng-switch-when="a">A<input ng-model="obj.key"></div>' +
+                        '<div ng-switch-when="b">B</div>' +
+                        '<div ng-switch-when="c">C</div>' +
+                    '</div>';
+        element = $compile(tpl)($scope);
+        angular.element(document.body).append(element);
+        $scope.$digest();
+    });
+    
+    it("changes the original value",function() {
+        var input = element.find('input')[0];
+        var scope = angular.element(input).scope();
+        angular.element(input).val('b').triggerHandler('input');
+        $scope.$digest();
+
+        //the new element is selected: 'B'
+        expect(angular.element(element.children()[0]).text()).toBe('B');
+
+        //the value in the parent and child scope is equal (='b') because we work here with objects
+        expect(scope.obj.key).toBe('b');
+        expect($scope.obj.key).toEqual('b');
+
+        //additional tests (ng-scope-aware)
+        //.. it has a member 'obj'
+        expect(scope).toHaveMembers('obj');
+        //.. inherits 'obj' from the parent scope (prototypal inheritance)
+        expect(scope).toHaveInheritedMembers('obj');
+        //.. doesn't shadow the property 'obj' because the inherited property is used when the input value is inserted
+        expect(scope).not.toShadow('obj');
+    });
+});
+```
+
+**Note:** `$scope.obj` is changed to `'b'` because it was changed by `ng-model="obj.key"`. There is no property shadowing.
+
 ### Example 5 (directive with shared scope)
 ### Example 6 (directive with own scope)
 ### Example 7 (directive with isolate scope)
