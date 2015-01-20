@@ -102,10 +102,7 @@ expect(scope).toHaveChildScopes();
 #### using primitives
 
  ```js
-describe('usage of primitives', function () {
-
     var $scope, el, element;
-    
     beforeEach(function () {
         $scope = $rootScope.$new();
         $scope.val = 'X';
@@ -117,23 +114,34 @@ describe('usage of primitives', function () {
         $scope.$digest();
     });
 
-    it("doesn't change the original value because primitives are used",function() {
+    afterEach(function() {
+        console.log(Inspector.inspect($scope));
+    });
+
+    it("doesn't change the original value",function() {
         var input = el.find('input')[0];
         var scope = angular.element(input).scope();
         angular.element(input).val('AAA').triggerHandler('input');
         $scope.$digest();
 
+        //scopes are different
+        expect(scope).not.toBe($scope);
+        expect(scope.$parent).toBe($scope);
+
         //the value in the parent scope is still 'a' because primitives are used
         expect(scope.val).toBe('AAA');
         expect($scope.values[0]).toBe('a');
+        expect($scope.val).toBe('X');
 
         //additional tests (ng-scope-aware)
         expect(scope).toHaveMembers('val');
+        expect(scope).not.toHaveInheritedMembers('val');
         expect(scope).toHaveInheritedMembers('values');
+        expect(scope).toShadow('val');
     });
-}); 
+});
 ```
-**Note**: the property `val` is created for each `ng-repeat` item so there is no shadowing regarding `val`. Nevertheless, the original values in `$scope.values` are not changed.
+**Note**: the property `val` is created for each `ng-repeat` item which will shadow the property in the parent scope (`$scope`).
 
 #### using objects
 
@@ -151,6 +159,9 @@ describe('usage of objects', function () {
         angular.element(document.body).append(element);
         $scope.$digest();
     });
+    afterEach(function() {
+        console.log(Inspector.inspect($scope));
+    });
 
     it("changes the original value",function() {
         var input = el.find('input')[0];
@@ -158,19 +169,27 @@ describe('usage of objects', function () {
         angular.element(input).val('AAA').triggerHandler('input');
         $scope.$digest();
 
-         //the value in the parent scope is 'AAA'
+        //scopes are still different
+        expect(scope).not.toBe($scope);
+        expect(scope.$parent).toBe($scope);
+
+        //the value in the parent scope is 'AAA'
         expect(scope.val.key).toBe('AAA');
         expect($scope.values[0]).toEqual(jasmine.objectContaining({key: 'AAA'}));
+        expect($scope.val).toEqual({});
 
         //additional tests (ng-scope-aware)
         //.. creates an own member 'val'
         expect(scope).toHaveMembers('val');
         //.. inherits 'values' but not 'val'
         expect(scope).toHaveInheritedMembers('values');
+        expect(scope).not.toHaveInheritedMembers('val');
+        expect(scope).not.toShadow('val');
     });
 });
 ```
-**Note**: the property `val` is created for each `ng-repeat` item but there is a reference to the original `values` array. The elements in `values` are changed if `val` (in `ng-repeat`) gets changed.   
+**Note**: the property `val` is created for each `ng-repeat` item but there is a reference to the original `values` array. 
+The elements in `values` are changed if `val` (in `ng-repeat`) gets changed.   
 
 ### Example 2 (ng-include)
 
