@@ -6,6 +6,10 @@ THIS IS WORK IN PROGRESS.
 - [About](#about)
 - [Usage](#usage)
   - [In your Jasmine tests](#in-your-jasmine-tests)
+    - [ng-repeat](#ng-repeat)
+    - [ng-include](#ng-include)
+    - [ng-view](#ng-view)
+    - [directive with shared scope](#directive with shared scope)
   - [In your Code](#in-your-code)
 
 # About
@@ -93,7 +97,7 @@ expect(scope).not.toShadow('token');
 expect(scope).toHaveChildScopes();
 ```
 
-### Example 1 (ng-repeat)
+### ng-repeat
 
 **ng-repeat** will create a new child scope per item. Your keys should be objects otherwise changes made in child scope have no effect to the parent scope.
  
@@ -137,7 +141,6 @@ expect(scope).toHaveChildScopes();
         expect(scope).toHaveMembers('val');
         expect(scope).not.toHaveInheritedMembers('val');
         expect(scope).toHaveInheritedMembers('values');
-        expect(scope).toShadow('val');
     });
 });
 ```
@@ -184,18 +187,21 @@ describe('usage of objects', function () {
         //.. inherits 'values' but not 'val'
         expect(scope).toHaveInheritedMembers('values');
         expect(scope).not.toHaveInheritedMembers('val');
-        expect(scope).not.toShadow('val');
     });
 });
 ```
 **Note**: the property `val` is created for each `ng-repeat` item but there is a reference to the original `values` array. 
-The elements in `values` are changed if `val` (in `ng-repeat`) gets changed.   
+The elements in `values` are changed if `val` (in `ng-repeat`) gets changed. The property `$scope.val` isn't changed because `val` (in `ng-repeat`) 
+doesn't refer to it.
 
-### Example 2 (ng-include)
+**Note 2**: `.toShadow` or `.not.toShadow` is not applicable because each iteration of `ng-repeat` creates a new child scope 
+and that new child scope always gets a new property.
+
+### ng-include
 
 **ng-include** will create a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
 
-**Note**: templates must be present in your $templateCache. In this example a template is added in beforeEach method as follows:
+**Note**: templates must be present in your `$templateCache`. In this example templates are added in `beforeEach` method as follows:
 ```js
 $templateCache.put('primitive.tpl', '<div><input ng-model="primitive"></div>');
 $templateCache.put('object.tpl', '<div><input ng-model="obj.key"></div>');
@@ -286,7 +292,7 @@ expect(scope).not.toShadow('obj');
 ```
 will pass.
 
-### Example 3 (ng-view)
+### ng-view
 
 **ng-view** will create a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
 
@@ -374,7 +380,7 @@ describe('usage of objects', function () {
 
 **Note:** the property `obj` is *NOT* shadowed because it's an object.
 
-### Example 4 (ng-switch)
+### ng-switch
 
 **ng-switch** will create a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
 
@@ -465,7 +471,56 @@ describe('usage of objects', function () {
 
 **Note:** `$scope.obj` is changed to `'b'` because it's an object. There is no property shadowing.
 
-### Example 5 (directive with shared scope)
+### directive with shared scope
+
+Directives with shared scope don't create any new scope. They operate on the properties of the present scope.
+
+#### using primitives or objects
+
+```js
+beforeEach(inject(function (_$rootScope_, _$compile_, _Inspector_, _InspectorHelpers_) {
+    $rootScope = _$rootScope_;
+    $compile = _$compile_;
+    Inspector = _Inspector_;
+    InspectorHelpers = _InspectorHelpers_;
+
+    $scope = $rootScope.$new();
+    $scope.token = 'a';
+    element = InspectorHelpers.createDirective('directiveSharedScope', $scope);
+}));
+
+afterEach(function() {
+    console.log(Inspector.inspect($scope));
+});
+
+it("doesn't create own scope",function() {
+
+    var input = element.find('input')[0];
+    var scope = angular.element(input).scope();
+    expect(scope).toBe($scope);
+});
+
+it("clobbers the shared properties", function () {
+    var input = element.find('input')[0];
+    var scope = angular.element(input).scope();
+    angular.element(input).val('AAA').triggerHandler('input');
+    $scope.$digest();
+
+    //the value of token is 'AAA' because the directive has overridden the value in the shared scope
+    expect(scope.token).toBe($scope.token);
+    expect($scope.token).toBe('AAA');
+
+    //additional tests (ng-scope-aware)
+    expect(scope).toHaveMembers('token');
+});
+```
+*Note*: if you are wondering why we don't test
+```js
+    expect(scope).not.toHaveInheritedMembers('token');  //because the is no inheritance at all
+    expect(scope).not.toShadow('token');
+```
+it's because we would test the shared scope (coming from outside) which doesn't make a sense in terms of the directive test case.
+
 ### Example 6 (directive with own scope)
 ### Example 7 (directive with isolate scope)
 
@@ -476,6 +531,7 @@ TODO
 ## in your Code
 
 ### Print the scope hierarchy
+
 ```js
 console.log(Inspector.inspect(scope));
 ```
