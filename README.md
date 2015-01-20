@@ -9,6 +9,7 @@ THIS IS WORK IN PROGRESS.
     - [ng-repeat](#ng-repeat)
     - [ng-include](#ng-include)
     - [ng-view](#ng-view)
+    - [ng-switch](#ng-switch)
     - [directive with shared scope](#directive-with-shared-scope)
   - [In your Code](#in-your-code)
 
