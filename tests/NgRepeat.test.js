@@ -42,6 +42,7 @@ describe('Inspector abilities for ngRepeat scope problems', function () {
             //the value in the parent scope is still 'a' because primitives are used
             expect(scope.val).toBe('AAA');
             expect($scope.values[0]).toBe('a');
+            expect($scope.val).toBe('X');
 
             //additional tests (ng-scope-aware)
             expect(scope).toHaveMembers('val');
@@ -82,6 +83,7 @@ describe('Inspector abilities for ngRepeat scope problems', function () {
             //the value in the parent scope is 'AAA'
             expect(scope.val.key).toBe('AAA');
             expect($scope.values[0]).toEqual(jasmine.objectContaining({key: 'AAA'}));
+            expect($scope.val).toEqual({});
 
             //additional tests (ng-scope-aware)
             //.. creates an own member 'val'

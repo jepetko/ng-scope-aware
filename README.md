@@ -133,7 +133,7 @@ describe('usage of primitives', function () {
     });
 }); 
 ```
-**Note**: the property 'val' is created for each ng-repeat item so there is no shadowing regarding 'val'.
+**Note**: the property `val` is created for each `ng-repeat` item so there is no shadowing regarding `val`. Nevertheless, the original values in `$scope.values` are not changed.
 
 #### using objects
 
@@ -170,6 +170,7 @@ describe('usage of objects', function () {
     });
 });
 ```
+**Note**: the property `val` is created for each `ng-repeat` item but there is a reference to the original `values` array. The elements in `values` are changed if `val` (in `ng-repeat`) gets changed.   
 
 ### Example 2 (ng-include)
 
@@ -217,8 +218,8 @@ describe('usage of primitives', function () {
 });
 ```
 
-**Note**: property 'primitive' is shadowed because we typed a value into the input field which is bounded to the 'primitive' property. 
-This will create a new property in the child scope (scope). The parent scope property ($scope) is not affected. 
+**Note**: property `primitive` is shadowed because we typed a value into the input field which is bounded to the `primitive` property. 
+This will create a new property in the child scope (`scope`). The parent scope property (`$scope`) is not affected. 
 Therefore 
 ```js
 expect(scope).toShadow('primitive');
@@ -258,8 +259,8 @@ describe('usage of objects', function () {
     });
 });
 ```
-**Note**: property 'obj' is *NOT* shadowed because we are using 'obj' as model of the input field. When typing a new value the original object is changed. 
-The parent scope property ($scope) is affected. 
+**Note**: property `obj` is *NOT* shadowed because we are using `obj` as model for the input field. When typing a new value the original object is changed. 
+The parent scope property (`$scope`) is affected. 
 Therefore 
 ```js
 expect(scope).not.toShadow('obj');
@@ -320,7 +321,7 @@ describe('usage of primitives', function () {
 });
 ```
 
-**Note:** the property "primitive" is shadowed because it's a primitive.
+**Note:** the property `primitive` is shadowed because it's a primitive.
 
 #### using objects
 
@@ -352,7 +353,7 @@ describe('usage of objects', function () {
 });
 ```
 
-**Note:** the property "obj" is not shadowed because it's an object.
+**Note:** the property `obj` is *NOT* shadowed because it's an object.
 
 ### Example 4 (ng-switch)
 
@@ -397,7 +398,8 @@ describe('usage of primitives', function () {
 });
 ```
 
-**Note:** `$scope.primitive` is still `'a'` because a new property `primitive` has been created on the `ng-switch` scope. Hence `$scope.primitive` is shadowed.
+**Note:** `$scope.primitive` is still `'a'` because a new property `primitive` is created on the `ng-switch` scope when typing a new text into the input field. 
+Hence `$scope.primitive` is shadowed.
 
 #### using objects
 
@@ -442,7 +444,7 @@ describe('usage of objects', function () {
 });
 ```
 
-**Note:** `$scope.obj` is changed to `'b'` because it was changed by `ng-model="obj.key"`. There is no property shadowing.
+**Note:** `$scope.obj` is changed to `'b'` because it's an object. There is no property shadowing.
 
 ### Example 5 (directive with shared scope)
 ### Example 6 (directive with own scope)
