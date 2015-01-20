@@ -43,7 +43,5 @@ describe('Inspector abilities for ngDirective({scope:false}) scope problems', fu
 
         //additional tests (ng-scope-aware)
         expect(scope).toHaveMembers('token');
-        expect(scope).not.toHaveInheritedMembers('token');  //because the is no inheritance at all
-        expect(scope).not.toShadow('token');
     });
 });
