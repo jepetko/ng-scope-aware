@@ -118,10 +118,6 @@ expect(scope).toHaveChildScopes();
         $scope.$digest();
     });
 
-    afterEach(function() {
-        console.log(Inspector.inspect($scope));
-    });
-
     it("doesn't change the original value",function() {
         var input = el.find('input')[0];
         var scope = angular.element(input).scope();
@@ -161,9 +157,6 @@ describe('usage of objects', function () {
         element = $compile(el)($scope);
         angular.element(document.body).append(element);
         $scope.$digest();
-    });
-    afterEach(function() {
-        console.log(Inspector.inspect($scope));
     });
 
     it("changes the original value",function() {
@@ -500,10 +493,6 @@ beforeEach(inject(function (_$rootScope_, _$compile_, _Inspector_, _InspectorHel
     element = InspectorHelpers.createDirective('directiveSharedScope', $scope);
 }));
 
-afterEach(function() {
-    console.log(Inspector.inspect($scope));
-});
-
 it("doesn't create own scope",function() {
 
     var input = element.find('input')[0];
@@ -525,6 +514,7 @@ it("clobbers the shared properties", function () {
     expect(scope).toHaveMembers('token');
 });
 ```
+
 *Note*: if you are wondering why we don't test
 ```js
     expect(scope).not.toHaveInheritedMembers('token');
