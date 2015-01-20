@@ -94,6 +94,14 @@
                 return NodeBuilder.start(node).addAttr('fun','alienFun()')
                     .addContent('<ul><li>transcluded</li></ul>')
                     .end();
+            },
+            'directiveIsolatedScopeWithPrimitiveAndObjectWithTransclude': function() {
+                var node = toDashed('directiveIsolatedScopeWithPrimitiveAndObjectWithTransclude');
+                return NodeBuilder.start(node)
+                    .addAttr('token','{{alienToken}}')
+                    .addAttr('tokenobj', 'alienTokenObj')
+                    .addContent('<div ng-init="bla = 1;"><input ng-model="token"><input ng-model="tokenObj.token"></div>')
+                    .end();
             }
         };
 

@@ -13,7 +13,7 @@
         'transclude': true,
         'template' : '<div>{{token}}<input ng-model="token"><p ng-transclude></p></div>'
     };
-	
+
 	angular.module('inspector-test-mocks', ['ngRoute'])
     .config( ['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
         $routeProvider
@@ -98,6 +98,18 @@
         var retVal = angular.extend(dest, defaultDirectiveTranscludeReturnValue);
         retVal.template = '<div><div ng-click="fun()">{{token}}</div><p ng-transclude></p></div>';
         return retVal;
+    })
+    .directive('directiveIsolatedScopeWithPrimitiveAndObjectWithTransclude', function() {
+        return {
+            'restrict' : 'AE',
+            'replace': true,
+            'transclude': true,
+            'scope': {
+                'token': '@',
+                'tokenobj': '='
+            },
+            'template' : '<div><div>{{token}}, {{tokenobj.token}}</div><div ng-transclude></div></div>'
+        };
     })
     .controller('Ctrl', ['$scope', function($scope) {
         $scope.primitive = 'val';
