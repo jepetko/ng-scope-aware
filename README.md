@@ -243,7 +243,7 @@ describe('usage of primitives', function () {
 });
 ```
 
-**Note**: property `primitive` is shadowed because we typed a value into the input field which is bounded to the `primitive` property. 
+**Note**: property `primitive` is shadowed because a new text is inserted into the input field which is bounded to the `primitive` property. 
 This will create a new property in the child scope (`scope`). The parent scope property (`$scope`) is not affected. 
 Therefore 
 ```js
