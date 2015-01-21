@@ -11,6 +11,9 @@ THIS IS WORK IN PROGRESS.
     - [ng-view](#ng-view)
     - [ng-switch](#ng-switch)
     - [directive with shared scope](#directive-with-shared-scope)
+    - [directive with own scope](#directive-with-own-scope)
+    - [directive with isolate scope](#directive-with-isolate-scope)
+    - [directive with ng-transclude](#directive-with-ng-transclude)
   - [In your Code](#in-your-code)
 
 # About
@@ -922,9 +925,6 @@ describe('when objects are used', function() {
 
 *Note*: `tokenObj` is not shadowed because it's an object.
 
-### Integration Example
-
-TODO
 
 ## in your Code
 
