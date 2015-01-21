@@ -21,6 +21,20 @@ Use this npm package to test the scopes (aka your models).
 If you are not familiar with scopes please read this fantastic guide first:
 [Understanding Scopes](https://github.com/angular/angular.js/wiki/Understanding-Scopes)
 
+Here is a brief overview about the particular angular constructs and those behavior in terms of scopes:
+
+| Angular construct                            | Does it create a new scope? | Does it inherit from the parent scope?           |
+|----------------------------------------------|-----------------------------|--------------------------------------------------|
+| ng-repeat                                    |             YES             |                        YES                       |
+| ng-include                                   |             YES             |                        YES                       |
+| ng-switch                                    |             YES             |                        YES                       |
+| ng-view                                      |             YES             |                        YES                       |
+| ng-controller                                |             YES             |                        YES                       |
+| Directive with { scope : false }             |              NO             | NOT APPLICABLE (because there is no inheritance) |
+| Directive with   { scope : true }            |             YES             |                        YES                       |
+| Directive with isolate scope { scope :  {} } |             YES             |                        NO                        |
+| ng-transclude                                |             YES             |                                                  |
+
 # Installation
 
 ## add it to your dependencies
@@ -34,7 +48,8 @@ If you are not familiar with scopes please read this fantastic guide first:
     "angular": "1.3.8",
     "angular-mocks": "1.3.8",
     "angular-resource": "1.3.8",
-    // ... more dependencies
+    
+    // =====> add the dependency to your application
     "ng-scope-aware"
   }
 }
@@ -43,24 +58,69 @@ If you are not familiar with scopes please read this fantastic guide first:
 ## edit your karma.conf.js
 
 ```js
-// list of files / patterns to load in the browser
-files: [
-    'node_modules/angular/angular.js',
-    'node_modules/angular-resource/angular-resource.js',
-    'node_modules/angular-mocks/angular-mocks.js',
+module.exports = function(config) {
 
-    //add the file path
-    'node_modules/ng-scope-aware/dist/ng-scope-aware.js',
+    config.set({
 
-    //source code:
-    'app/js/*.js',
-    'app/templates/*.html',
+        // base path, that will be used to resolve files and exclude
+        basePath: '.',
 
-    //tests:
-    'tests/*.js'
-]
+
+        // =====> use jasmine for scope tests
+        frameworks: ['jasmine'],
+
+
+        // list of files / patterns to load in the browser
+        files: [
+            //your angular libraries
+            'node_modules/angular/angular.js',
+            'node_modules/angular-resource/angular-resource.js',
+            'node_modules/angular-mocks/angular-mocks.js',
+            
+            // =====> reference "ng-scope-aware"
+            'node_modules/ng-scope-aware/dist/ng-scope-aware.js',
+
+            //your source code and templates
+            'js/*.js',
+            'templates/*.html',
+
+            //tests:
+            'tests/*.js'
+        ],
+
+
+        // list of files to exclude
+        exclude: [
+            //'js/whatever.js',
+        ],
+
+
+        // test results reporter to use
+        // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
+        reporters: ['progress', 'html'],
+
+        //... more configuration ...
+                
+        port: 9876,
+        colors: true,
+        logLevel: config.LOG_INFO,
+        autoWatch: false,
+
+        // Start these browsers, currently available:
+        // - Chrome
+        // - ChromeCanary
+        // - Firefox
+        // - Opera (has to be installed with `npm install karma-opera-launcher`)
+        // - Safari (only Mac; has to be installed with `npm install karma-safari-launcher`)
+        // - PhantomJS
+        // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
+        browsers: ['PhantomJS'],
+        //browsers: ['Chrome'],
+        captureTimeout: 5000,
+        singleRun: true
+    });
+};
 ```
-
 
 # Usage
 
@@ -378,6 +438,8 @@ describe('usage of objects', function () {
 
 **ng-switch** creates a new child scope and inherits prototypally from the parent scope. Properties can be shadowed.
 
+[NgSwitch.test.js](tests/NgSwitch.test.js)
+
 #### using primitives
 
 ```js
@@ -467,7 +529,7 @@ describe('usage of objects', function () {
 
 ### directive with shared scope
 
-Directives with shared scope don't create any new scope. They operate on the properties of the present scope.
+Directives with `{scope : false}` don't create a new scope. They operate on the properties of the present (shared) scope.
 
 The used directive is configured as follows:
 ```js
@@ -479,6 +541,8 @@ The used directive is configured as follows:
     };	
  })
 ```
+
+[NgDirectiveWithScopeFalse.test.js](tests/NgDirectiveWithScopeFalse.test.js)
 
 #### using primitives or objects
 
@@ -523,8 +587,340 @@ it("clobbers the shared properties", function () {
 ```
 it's because we would test the shared scope (coming from outside) which doesn't make a sense in terms of the directive test case.
 
-### Example 6 (directive with own scope)
-### Example 7 (directive with isolate scope)
+### directive with own scope
+
+Directives with `{scope : true}` create a new scope. It inherits from the parent scope which means that primitives can be shadowed.
+
+[NgDirectiveWithScopeTrue.test.js](tests/NgDirectiveWithScopeTrue.test.js)
+
+#### using primitives
+
+*Note*: the used directive is configured as follows:
+
+```js
+.directive('directiveSharedScopeExplicitTrue', function() {
+    return {
+        'scope': true,
+        'restrict' : 'AE',
+        'replace': true,
+        'template' : '<div>{{token}}<input ng-model="token"></div>'
+    };	
+ })
+```
+
+```js
+describe('when primitives are used', function() {
+
+    var $scope, element;
+    beforeEach(function() {
+        $scope = $rootScope.$new();
+        $scope.token = 'a';
+        element = InspectorHelpers.createDirective('directiveSharedScopeExplicitTrue', $scope);
+    });
+
+    it("shadows primitive properties", function () {
+        var input = element.find('input')[0];
+        var scope = angular.element(input).scope();
+        angular.element(input).val('AAA').triggerHandler('input');
+        $scope.$digest();
+
+        //the value of token in the paren scope is still 'a' because the property has been shadowed
+        expect(scope.token).toBe('AAA');
+        expect($scope.token).toBe('a');
+
+        //additional tests (ng-scope-aware)
+        expect(scope).toHaveMembers('token');
+        expect(scope).not.toHaveInheritedMembers('token');
+        expect(scope).toShadow('token');
+    });
+});
+```
+
+**Note:** `$scope.primitive` is still `'a'` because a new property `primitive` is created on the directive `directive-shared-scope-explicit-true` scope when a new text is inserted into the input field. 
+Therefore `$scope.primitive` is shadowed.
+
+#### using objects
+
+The used directive is configured as follows:
+
+```js
+.directive('directiveSharedScopeExplicitTrue', function() {
+    return {
+        'scope': true,
+        'restrict' : 'AE',
+        'replace': true,
+        'template' : '<div>{{tokenobj.token}}<input ng-model="tokenobj.token"></div>'
+    };	
+ })
+```
+
+```js
+describe('when objects are used', function() {
+
+    var $scope, element;
+    beforeEach(function() {
+        $scope = $rootScope.$new();
+        $scope.tokenobj = { token : 'a' };
+        element = InspectorHelpers.createDirective('directiveSharedScopeExplicitTrueWithObject', $scope);
+    });
+
+    it("inherits objects and doesn't shadow them", function () {
+        var input = element.find('input')[0];
+        var scope = angular.element(input).scope();
+        angular.element(input).val('AAA').triggerHandler('input');
+        $scope.$digest();
+
+        //the value of token in the parent scope is 'AAA' because object is used
+        expect(scope.tokenobj.token).toBe('AAA');
+        expect($scope.tokenobj.token).toBe('AAA');
+
+        //additional tests (ng-scope-aware)
+        expect(scope).toHaveMembers('tokenobj');
+        expect(scope).toHaveInheritedMembers('tokenobj');
+        expect(scope).not.toShadow('token');
+        expect(scope).not.toShadow('tokenobj');
+    });
+});
+```
+**Note:** `$scope.tokenobj` is changed to `'AAA'` because it's an object. There is no property shadowing.
+
+### directive with isolate scope
+
+Directives with isolate/isolated scope create their own scope which don't inherit at all. The values are passed from outside if you configure them in the directive (by `@`, `=` or `&`).  
+
+[NgDirectiveWithIsolatedScope.test.js](tests/NgDirectiveWithIsolatedScope.test.js)
+
+#### using primitives
+
+The directive tested here:
+
+```js
+.directive('directiveIsolatedScopeWithString', function() {
+    return {
+        'scope' : {
+            'token': '@'
+        },
+        'restrict' : 'AE',
+        'replace': true,
+        'template' : '<div>{{tokenobj.token}}<input ng-model="tokenobj.token"></div>'
+    };	
+ })
+```
+
+The compiled template looks like this:
+```html
+<directive-isolated-scope-with-string token="{{alienToken}}"></directive-isolated-scope-with-string>
+```
+*Test*:
+
+```js
+describe('when primitives are used', function() {
+
+    var $scope, element;
+    beforeEach(function() {
+        $scope = $rootScope.$new();
+        $scope.token = 'a';
+        element = InspectorHelpers.createDirective('directiveIsolatedScopeWithString', $scope);
+    });
+
+    it("doesn't shadow primitives because isolated scope is used", function () {
+        var input = element.find('input')[0];
+        var scope = angular.element(input).scope();
+        angular.element(input).val('AAA').triggerHandler('input');
+        $scope.$digest();
+        
+        //the value of token in the parent scope is still 'a' because there token is referenced by '@' (string)
+        expect(scope.token).toBe('AAA');
+        expect($scope.token).toBe('a');
+
+        //additional tests (ng-scope-aware)
+        expect(scope).toHaveMembers('token');
+        expect(scope).not.toHaveInheritedMembers('token');
+        expect(scope).not.toShadow('token');
+    });
+});
+```    
+
+*Note*: there is no bi-directional binding when `@``is used. Therefore, the property `$scope.token` (passed property) remains unchanged. Consider, 
+that there is no shadowing because there is no prototypal inheritance. Therefore this test will pass:
+```js
+expect(scope).not.toShadow('token');
+```
+
+#### using objects
+
+The directive tested here:
+
+```js
+.directive('directiveIsolatedScopeWithObject', function() {
+    return {
+        'scope' : {
+            'tokenobj': '='
+        },
+        'restrict' : 'AE',
+        'replace': true,
+        'template' : '<div>{{tokenobj.token}}<input ng-model="tokenobj.token"></div>'
+    };	
+ })
+```
+
+The compiled template looks like this:
+```html
+<directive-isolated-scope-with-object tokenobj="alienTokenObj"></directive-isolated-scope-with-object>
+```
+
+```js
+describe('when objects are used', function() {
+
+    var $scope, element;
+    beforeEach(function() {
+        $scope = $rootScope.$new();
+        $scope.alienTokenObj = { token : 'a' };
+        element = InspectorHelpers.createDirective('directiveIsolatedScopeWithObject', $scope);
+    });
+
+    it("doesn't shadow objects because isolated scope is used", function () {
+        var input = element.find('input')[0];
+        var scope = angular.element(input).scope();
+        angular.element(input).val('AAA').triggerHandler('input');
+        $scope.$digest();
+
+        //the value of token in the parent scope is 'AAA' because object is used (= operator for isolated scope)
+        expect(scope.tokenobj.token).toBe('AAA');
+        expect($scope.alienTokenObj.token).toBe('AAA');
+
+        //additional tests (ng-scope-aware)
+        expect(scope).toHaveMembers('tokenobj');
+        //there is no prototypal inheritance at all
+        expect(scope).not.toHaveInheritedMembers('tokenobj');
+        expect(scope).not.toHaveInheritedMembers('alienTokenObj');
+        //there is no shadowing
+        expect(scope).not.toShadow('tokenobj');
+        expect(scope).not.toShadow('alienTokenObj');
+    });
+});
+```
+
+*Note*: there is bi-directional relationship regarding `tokenobj`. If the `tokenobj.token` is changed inside the scope the changes are propagated 
+to the outer scope (`alienTokenObj.token`). There is no inheritance and no shadowing.
+
+### directive with ng-transclude
+
+*ng-transclude* behaves like this (from https://docs.angularjs.org/api/ng/service/$compile):
+**"When you call a transclude function it returns a DOM fragment that is pre-bound to a transclusion scope.
+This scope is special, in that it is a child of the directive's scope (and so gets destroyed when the directive's
+scope gets destroyed) but it inherits the properties of the scope from which it was taken."**
+
+The directive tested here:
+
+```js
+.directive('directiveIsolatedScopeWithPrimitiveAndObjectWithTransclude', function() {
+    return {
+        'restrict' : 'AE',
+        'replace': true,
+        'transclude': true,
+        'scope': {
+            'token': '@',
+            'tokenobj': '='
+        },
+        'template' : '<div><div>{{token}}, {{tokenobj.token}}</div><div ng-transclude></div></div>'
+    };	
+ })
+```
+
+The compiled template looks like this:
+```html
+<directive-isolated-scope-with-primitive-and-object-with-transclude token="{{alienToken}}" tokenobj="alienTokenObj">
+    <div><input ng-model="token"><input ng-model="tokenObj.token"></div>
+</directive-isolated-scope-with-primitive-and-object-with-transclude>
+```
+
+[NgDirectiveWithIsolatedScopeAndTransclude.test.js](tests/NgDirectiveWithIsolatedScopeAndTransclude.test.js)
+
+#### using primitives
+
+```js
+describe('when primitives are used', function() {
+
+    var $scope, element;
+    beforeEach(inject(function($compile) {
+        $scope = $rootScope.$new();
+        $scope.token = 'token';
+        $scope.alienToken = 'alienToken';
+        $scope.alienTokenObj = {token : 'token_value'};
+        element = InspectorHelpers.createDirective('directiveIsolatedScopeWithPrimitiveAndObjectWithTransclude', $scope);
+    }));
+
+    it("doesn't shadow primitives because isolated scope is used", function () {
+        var input = element.find('input')[0];
+        var scope = angular.element(input).scope();
+        angular.element(input).val('AAA').triggerHandler('input');
+        $scope.$digest();
+
+        //Note: transclude will create a new child scope which is child of the isolate scope
+        expect(scope.$parent.$parent).toBe($scope);
+
+        //the value of token in the parent scope is still 'a' because there token is referenced by '@' (string)
+        // and therefore not changed in the child scope
+        expect(scope.token).toBe('AAA');
+        expect($scope.token).toBe('token');
+
+        //additional tests (ng-scope-aware)
+        expect(scope).toHaveMembers('token', 'alienToken', 'alienTokenObj');
+        //token is not inherited because it's shadowed
+        expect(scope).toHaveInheritedMembers('alienToken', 'alienTokenObj');
+        expect(scope).toShadow('token');
+    });
+});
+```
+
+*Note*: the property `token` is shadowed by `ng-transclude`. From inheritance point of view `ng-transclude` inherits from `$scope` rather than `directive-isolated-scope-with-primitive-and-object-with-transclude`.
+Even if `scope.$parent` refers to the directive the `__proto__` property refers to `$scope`. Therefore, directive and `ng-transclude` are "siblings".
+
+#### using objects
+
+```js
+describe('when objects are used', function() {
+
+    var $scope, element;
+    beforeEach(function() {
+        $scope = $rootScope.$new();
+        $scope.token = 'token';
+        $scope.tokenObj = {token : 'from_token_obj'};
+        $scope.alienToken = 'alienToken';
+        $scope.alienTokenObj = {token : 'from_alien_token_obj'};
+        element = InspectorHelpers.createDirective('directiveIsolatedScopeWithPrimitiveAndObjectWithTransclude', $scope);
+    });
+    
+    it("doesn't shadow objects because isolated scope is used", function () {
+        var input = element.find('input')[1];
+        var scope = angular.element(input).scope();
+        angular.element(input).val('AAA').triggerHandler('input');
+        $scope.$digest();
+
+        //Note: transclude will create a new child scope which is child of the isolate scope
+        //
+        //From guide: https://docs.angularjs.org/api/ng/service/$compile
+        // "When you call a transclude function it returns a DOM fragment that is pre-bound to a transclusion scope.
+        // This scope is special, in that it is a child of the directive's scope (and so gets destroyed when the directive's
+        // scope gets destroyed) but it inherits the properties of the scope from which it was taken."
+        expect(scope.$parent.$parent).toBe($scope);
+
+        //the value of token in the parent scope is 'AAA' because object is used (= operator for isolated scope)
+        expect(scope.tokenObj.token).toBe('AAA');
+        expect($scope.tokenObj.token).toBe('AAA');
+
+        //additional tests (ng-scope-aware)
+        expect(scope).toHaveMembers('token', 'tokenObj', 'alienToken', 'alienTokenObj');
+        expect(scope).toHaveInheritedMembers('token', 'tokenObj', 'alienToken', 'alienTokenObj');
+        //there is no shadowing
+        expect(scope).not.toShadow('token');
+        expect(scope).not.toShadow('tokenObj');
+    });
+});
+```
+
+*Note*: `tokenObj` is not shadowed because it's an object.
 
 ### Integration Example
 
