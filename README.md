@@ -809,10 +809,11 @@ to the outer scope (`alienTokenObj.token`). There is no inheritance and no shado
 
 ### directive with ng-transclude
 
-*ng-transclude* behaves like this (from https://docs.angularjs.org/api/ng/service/$compile):
-**"When you call a transclude function it returns a DOM fragment that is pre-bound to a transclusion scope.
+`ng-transclude` behaves like this (from https://docs.angularjs.org/api/ng/service/$compile):
+
+*"When you call a transclude function it returns a DOM fragment that is pre-bound to a transclusion scope.
 This scope is special, in that it is a child of the directive's scope (and so gets destroyed when the directive's
-scope gets destroyed) but it inherits the properties of the scope from which it was taken."**
+scope gets destroyed) but it inherits the properties of the scope from which it was taken."*
 
 The directive tested here:
 
