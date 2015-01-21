@@ -1,8 +1,6 @@
 ng-scope-aware
 ==============
 
-THIS IS WORK IN PROGRESS.
-
 - [About](#about)
 - [Usage](#usage)
   - [In your Jasmine tests](#in-your-jasmine-tests)
