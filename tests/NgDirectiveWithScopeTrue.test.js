@@ -21,7 +21,7 @@ describe('Inspector abilities for ngDirective({scope:true}) scope problems', fun
         beforeEach(function() {
             $scope = $rootScope.$new();
             $scope.token = 'a';
-            element = InspectorHelpers.createDirective('directiveSharedScopeExplicitTrue', $scope);
+            element = InspectorHelpers.createDirective('directiveOwnScopeExplicitTrue', $scope);
         });
 
         afterEach(function() {
@@ -55,7 +55,7 @@ describe('Inspector abilities for ngDirective({scope:true}) scope problems', fun
         beforeEach(function() {
             $scope = $rootScope.$new();
             $scope.tokenobj = { token : 'a' };
-            element = InspectorHelpers.createDirective('directiveSharedScopeExplicitTrueWithObject', $scope);
+            element = InspectorHelpers.createDirective('directiveOwnScopeExplicitTrueWithObject', $scope);
         });
 
         afterEach(function() {
@@ -76,6 +76,7 @@ describe('Inspector abilities for ngDirective({scope:true}) scope problems', fun
             expect(scope).toHaveMembers('tokenobj');
             expect(scope).toHaveInheritedMembers('tokenobj');
             expect(scope).not.toShadow('token');
+            expect(scope).not.toShadow('tokenobj');
         });
     });
 });
