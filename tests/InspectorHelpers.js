@@ -100,7 +100,7 @@
                 return NodeBuilder.start(node)
                     .addAttr('token','{{alienToken}}')
                     .addAttr('tokenobj', 'alienTokenObj')
-                    .addContent('<div ng-init="bla = 1;"><input ng-model="token"><input ng-model="tokenObj.token"></div>')
+                    .addContent('<div><input ng-model="token"><input ng-model="tokenObj.token"></div>')
                     .end();
             }
         };

@@ -32,10 +32,10 @@
 	.directive('directiveSharedScopeExplicit', function() {
 		return angular.extend({'scope': false}, defaultDirectiveReturnValue);
 	})
-    .directive('directiveSharedScopeExplicitTrue', function() {
+    .directive('directiveOwnScopeExplicitTrue', function() {
         return angular.extend({'scope': true}, defaultDirectiveReturnValue);
     })
-    .directive('directiveSharedScopeExplicitTrueWithObject', function() {
+    .directive('directiveOwnScopeExplicitTrueWithObject', function() {
         var retVal = angular.extend({'scope': true}, defaultDirectiveReturnValue);
         retVal.template = '<div>{{tokenobj.token}}<input ng-model="tokenobj.token"></div>';
         return retVal;
