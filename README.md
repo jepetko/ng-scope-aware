@@ -34,7 +34,7 @@ Here is a brief overview about the particular angular constructs and those behav
 | Directive with { scope : false }             |              NO             | NOT APPLICABLE (because there is no inheritance) |
 | Directive with   { scope : true }            |             YES             |                        YES                       |
 | Directive with isolate scope { scope :  {} } |             YES             |                        NO                        |
-| ng-transclude                                |             YES             | YES. In this case the parent scope is the \nparent of the directive which means that the directive and ng-transclude are siblings.\n[directive with ng-transclude](#directive-with-ng-transclude)|
+| ng-transclude                                |             YES             | YES. In this case the parent scope is the parent of the directive which means that the directive and ng-transclude are siblings.[directive with ng-transclude](#directive-with-ng-transclude)|
 
 # Installation
 
