@@ -52,7 +52,7 @@ Here is a brief overview about the particular angular constructs and those behav
     "angular-resource": "1.3.8",
     
     // =====> add the dependency to your application
-    "ng-scope-aware"
+    "ng-scope-aware": "~0.0.4"
   }
 }
 ```
