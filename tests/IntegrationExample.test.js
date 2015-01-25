@@ -1,4 +1,7 @@
 describe('Testing scopes', function() {
+
+    "use strict";
+
     var $rootScope, $scope, $compile, element, Inspector;
 
     var compileTpl = function(tpl,scope) {
