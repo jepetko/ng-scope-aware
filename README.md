@@ -12,6 +12,7 @@ ng-scope-aware
     - [directive with own scope](#directive-with-own-scope)
     - [directive with isolate scope](#directive-with-isolate-scope)
     - [directive with ng-transclude](#directive-with-ng-transclude)
+    - [integration example](#integration-example)
   - [In your Code](#in-your-code)
 
 # About
@@ -924,6 +925,11 @@ describe('when objects are used', function() {
 
 *Note*: `tokenObj` is not shadowed because it's an object.
 
+### integration example
+
+IMHO the get most of model testing you need an integration test for all your controllers, directives, ng-includes and so on. 
+Have a look at [IntegrationExample.js](tests/IntegrationExample.js) and [IntegrationExample.test.js](tests/IntegrationExample.test.js).
+It compiles the code of the html page and tests it for model values and undesired scope behaviour.
 
 ## in your Code
 
