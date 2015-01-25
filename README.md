@@ -18,7 +18,7 @@ ng-scope-aware
 # About
 
 Inspects the scopes of the angular application and increases the awareness of the angular scopes. The angular scope is the model keeping the data of your application. It reflects how data are shared by the particular components and from where the access to them takes place.
-Use this npm package to test the scopes (aka your models).
+Use this npm package to test the scopes (aka your models). This integration example should give you a quick idea what's going on: [plunker integration of jasmine, angular and ng-scope-aware](http://run.plnkr.co/plunks/bJF980/).
 
 If you are not familiar with scopes please read this fantastic guide first:
 [Understanding Scopes](https://github.com/angular/angular.js/wiki/Understanding-Scopes)
@@ -930,6 +930,8 @@ describe('when objects are used', function() {
 IMHO the get most of model testing you need an integration test for all your controllers, directives, ng-includes and so on. 
 Have a look at [IntegrationExample.js](tests/IntegrationExample.js) and [IntegrationExample.test.js](tests/IntegrationExample.test.js).
 It compiles the code of the html page and tests it for model values and undesired scope behaviour.
+
+Check it out here: [plunker integration of jasmine, angular and ng-scope-aware](http://run.plnkr.co/plunks/bJF980/).
 
 ## in your Code
 
