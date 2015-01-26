@@ -50,7 +50,7 @@ module.exports = function(config) {
         // generate js files from html templates
         preprocessors: {
           'templates/*.html': 'ng-html2js',
-          'tests/*.js': 'coverage'
+          'lib/*.js': 'coverage'
         },
 
         port: 9876,
