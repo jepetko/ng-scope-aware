@@ -33,16 +33,24 @@ module.exports = function(config) {
 
         // test results reporter to use
         // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-        reporters: ['progress', 'html'],
+        reporters: ['progress', 'html', 'coverage'],
         
         htmlReporter: {
             outputFile: __dirname  + '/output.html',
             templatePath: __dirname + '/jasmine_template.html'
         },
+
+        coverageReporter: {
+            dir: 'coverage/',
+            reporters: [
+                { type: 'html', subdir: 'report-html' }
+            ]
+        },
         
         // generate js files from html templates
         preprocessors: {
-          'templates/*.html': 'ng-html2js'
+          'templates/*.html': 'ng-html2js',
+          'tests/*.js': 'coverage'
         },
 
         port: 9876,
