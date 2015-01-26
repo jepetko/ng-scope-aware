@@ -1,6 +1,8 @@
 ng-scope-aware
 ==============
 
+Karma tests: [![Build Status](https://travis-ci.org/jepetko/ng-scope-aware.svg?branch=master)](https://travis-ci.org/jepetko/ng-scope-aware)
+
 - [About](#about)
 - [Usage](#usage)
   - [In your Jasmine tests](#in-your-jasmine-tests)
