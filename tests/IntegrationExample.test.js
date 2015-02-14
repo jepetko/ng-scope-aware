@@ -2,7 +2,7 @@ describe('Testing scopes', function() {
 
     "use strict";
 
-    var $rootScope, $scope, $compile, element, Inspector;
+    var $rootScope, $scope, $compile, element, Inspector, Monitor;
 
     var compileTpl = function(tpl,scope) {
         var el = $compile(tpl)(scope);
@@ -13,7 +13,7 @@ describe('Testing scopes', function() {
     beforeEach(module('integration-example'));
     beforeEach(module('scope-aware'));
 
-    beforeEach(inject(function(_$rootScope_, _$compile_, _Inspector_) {
+    beforeEach(inject(function(_$rootScope_, _$compile_, _Inspector_, _Monitor_) {
         $rootScope = _$rootScope_;
         $compile = _$compile_;
         $scope = $rootScope.$new();
@@ -55,6 +55,7 @@ describe('Testing scopes', function() {
             '</div>';
         element = compileTpl(tpl,$scope);
         Inspector = _Inspector_;
+        Monitor = _Monitor_;
     }));
 
     describe('integration-example model', function() {
@@ -180,6 +181,11 @@ describe('Testing scopes', function() {
             });
 
             it('shadows the itm', function() {
+
+                var stat = {running : false};
+                Monitor.monitor($rootScope, stat);
+                stat.running = false;
+
                 expect(includeScope.itm).toEqual('A');
                 angular.element(includeElement.find('input')).val('C').triggerHandler('input');
                 $scope.$digest();
@@ -187,6 +193,8 @@ describe('Testing scopes', function() {
                 expect(includeScope.itm).toEqual('C');
                 expect(includeScope.$parent.itm).toEqual('A');
                 expect(includeScope).toShadow('itm');
+
+                Monitor.monitor($rootScope, stat);
             });
         });
     });
